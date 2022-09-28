@@ -1,4 +1,14 @@
-import { Box, Button, Checkbox, Container, FormControlLabel, Grid, Link, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Container,
+    FormControlLabel,
+    Grid,
+    Link,
+    TextField,
+    Typography,
+} from '@mui/material';
 import React, { useContext } from 'react';
 import { signIn } from 'next-auth/react';
 import NotificationContext from '../../store/notification-context';
@@ -22,25 +32,25 @@ const SignIn = (props: SignInProps) => {
         const response = await signIn('credentials', {
             redirect: false,
             email: email,
-            password: password
-        })
+            password: password,
+        });
 
         if (!response!.ok) {
             notificationCtx.showNotification({
                 message: 'Signin failed.',
-                status: 'error'
-            })
+                status: 'error',
+            });
 
             return;
         }
 
-        router.replace("/");
+        router.replace('/');
 
         notificationCtx.showNotification({
             message: 'Signin success',
-            status: 'success'
-        })
-    }
+            status: 'success',
+        });
+    };
 
     return (
         <>
@@ -48,13 +58,13 @@ const SignIn = (props: SignInProps) => {
                 <Box
                     sx={{
                         marginTop: 3,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        로그인
                     </Typography>
                     <Box
                         component="form"
@@ -67,7 +77,7 @@ const SignIn = (props: SignInProps) => {
                             required
                             fullWidth
                             id="email"
-                            label="Email Address"
+                            label="이메일"
                             name="email"
                             autoComplete="email"
                             autoFocus
@@ -77,14 +87,16 @@ const SignIn = (props: SignInProps) => {
                             required
                             fullWidth
                             name="password"
-                            label="Password"
+                            label="암호"
                             type="password"
                             id="password"
                             autoComplete="current-password"
                         />
                         <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
+                            control={
+                                <Checkbox value="remember" color="primary" />
+                            }
+                            label="로그인 상태 유지"
                         />
                         <Button
                             type="submit"
@@ -92,17 +104,21 @@ const SignIn = (props: SignInProps) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign In
+                            로그인
                         </Button>
-                        <Grid container justifyContent='flex-end'>
+                        <Grid container justifyContent="flex-end">
                             {/* <Grid item xs>
                                 <Link href="#" variant="body2" onClick={ openForgot }>
                                     Forgot password?
                                 </Link>
                             </Grid> */}
                             <Grid item>
-                                <Link href="#" variant="body2" onClick={ () => props.setLogin(false) }>
-                                    {"Don't have an account? Sign Up"}
+                                <Link
+                                    href="#"
+                                    variant="body2"
+                                    onClick={() => props.setLogin(false)}
+                                >
+                                    {'가입화면으로'}
                                 </Link>
                             </Grid>
                         </Grid>
@@ -110,7 +126,7 @@ const SignIn = (props: SignInProps) => {
                 </Box>
             </Container>
         </>
-    )
-}
+    );
+};
 
 export default SignIn;

@@ -1,8 +1,16 @@
-import { AppBar, Box, Button, IconButton, Menu, MenuItem, styled, Toolbar, Typography } from '@mui/material';
+import {
+    AppBar,
+    Box,
+    Button,
+    IconButton,
+    styled,
+    Toolbar,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { AccountCircle } from '@mui/icons-material';
 
 export const menus = ['TimeTable', 'Schedule'];
 export const pages = ['/table', '/week'];
@@ -17,15 +25,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export const paddingAppSpace = () => {
-    return (
-        <DrawerHeader></DrawerHeader>
-    )
-}
+    return <DrawerHeader></DrawerHeader>;
+};
 
-interface TopBarProp { }
+interface TopBarProp {}
 
 const TopBar = (props: TopBarProp) => {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+        null
+    );
     const { data } = useSession();
     const router = useRouter();
 
@@ -59,12 +67,35 @@ const TopBar = (props: TopBarProp) => {
                             </Button>
                         ))}
                     </Box>
-                    {!data && <Button color='inherit' onClick={() => router.push('/auth')}>Login</Button>}
-                    {data && <Button color='inherit' onClick={() => signOut() } >Logout</Button>}
+                    {!data && (
+                        <Button
+                            color="inherit"
+                            onClick={() => router.replace('/auth')}
+                        >
+                            로그인
+                        </Button>
+                    )}
+                    {data && (
+                        <>
+                            <Button color="inherit" onClick={() => signOut()}>
+                                로그아웃
+                            </Button>
+                            <IconButton
+                                size="large"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={() => router.push('/user')}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </>
+                    )}
                 </Toolbar>
             </AppBar>
         </>
-    )
-}
+    );
+};
 
 export default TopBar;

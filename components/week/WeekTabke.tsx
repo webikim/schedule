@@ -8,7 +8,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 class WeekData {
     day: number;
     date: Date;
-    holiday: boolean;
+    // holiday: boolean;
 
     constructor(day: number, date: Date) {
         this.day = day;
@@ -51,7 +51,7 @@ const getWeekData = (date: Date) => {
     refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
 
     const weekData = WeekString.map((each, index: number) => { 
-        refDate.setDate(refDate.getDate() + 1);
+        refDate.setDate(refDate.getDate());
         return new WeekData(index, new Date(refDate));
     });
     return weekData;

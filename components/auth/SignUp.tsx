@@ -1,4 +1,12 @@
-import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Container,
+    Grid,
+    Link,
+    TextField,
+    Typography,
+} from '@mui/material';
 import React, { useContext } from 'react';
 import NotificationContext from '../../store/notification-context';
 
@@ -13,7 +21,7 @@ const SignUp = (props: SignUpProps) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
-            fullname: data.get("fullname"),
+            fullname: data.get('fullname'),
             email: data.get('email'),
             password: data.get('password'),
         });
@@ -26,11 +34,11 @@ const SignUp = (props: SignUpProps) => {
             body: JSON.stringify({
                 fullname: fullname,
                 email: email,
-                password: password
+                password: password,
             }),
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         });
 
         if (!response.ok) {
@@ -40,30 +48,30 @@ const SignUp = (props: SignUpProps) => {
             }
             notificationCtx.showNotification({
                 message: message,
-                status: 'error'
-            })
+                status: 'error',
+            });
             return;
         }
 
         notificationCtx.showNotification({
             message: 'Signup success.',
-            status: 'success'
-        })
+            status: 'success',
+        });
         console.log('success ', await response.json());
-    }
+    };
     return (
         <>
             <Container component="main" maxWidth="xs">
                 <Box
                     sx={{
                         marginTop: 3,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Sign up
+                        간편가입
                     </Typography>
                     <Box
                         component="form"
@@ -79,7 +87,7 @@ const SignUp = (props: SignUpProps) => {
                                     required
                                     fullWidth
                                     id="fullname"
-                                    label="Full Name"
+                                    label="이름"
                                     autoFocus
                                 />
                             </Grid>
@@ -88,8 +96,8 @@ const SignUp = (props: SignUpProps) => {
                                     required
                                     fullWidth
                                     id="email"
-                                    label="Email Address"
                                     name="email"
+                                    label="이메일"
                                     autoComplete="email"
                                 />
                             </Grid>
@@ -98,9 +106,9 @@ const SignUp = (props: SignUpProps) => {
                                     required
                                     fullWidth
                                     name="password"
-                                    label="Password"
                                     type="password"
                                     id="password"
+                                    label="암호"
                                     autoComplete="new-password"
                                 />
                             </Grid>
@@ -111,12 +119,16 @@ const SignUp = (props: SignUpProps) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign Up
+                            가입하기
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2" onClick={ () => props.setLogin(true) }>
-                                    Already have an account? Sign in
+                                <Link
+                                    href="#"
+                                    variant="body2"
+                                    onClick={() => props.setLogin(true)}
+                                >
+                                    로그인 화면으로
                                 </Link>
                             </Grid>
                         </Grid>
@@ -124,7 +136,7 @@ const SignUp = (props: SignUpProps) => {
                 </Box>
             </Container>
         </>
-    )
-}
+    );
+};
 
 export default SignUp;

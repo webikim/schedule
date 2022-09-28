@@ -30,7 +30,7 @@ const handler = async (req: SignupApiRequest, res: SignupApiResponse) => {
     }
 
     const client = await connectMongo();
-    const dbuser = getUserByEmail(client, email);
+    const dbuser = await getUserByEmail(client, email);
     if (dbuser) {
         res.status(422).json({ message: 'User already exist with same email'})
         client.close();
