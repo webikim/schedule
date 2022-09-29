@@ -8,6 +8,7 @@ import { getUserByEmail } from '../../lib/auth/auth-dao';
 import { connectMongo } from '../../lib/mongo-helper';
 import Profile from '../../components/user/Profile';
 import Password from '../../components/user/Password';
+import ShopProfile from '../../components/reception/ShopProfile';
 
 interface UserPageProps {
     fullname: string;
@@ -33,8 +34,8 @@ const UserPage = (props: UserPageProps) => {
 
             <Grid container sx={{ marginTop: 5 }}>
                 <Grid item xs={12}>
-                    {/* <Profile fullname={props.fullname} email={props.email} /> */}
-                    <Password></Password>
+                    <Profile fullname={props.fullname} email={props.email} />
+                    {/* <Password email={props.email}></Password> */}
                 </Grid>
             </Grid>
         </>

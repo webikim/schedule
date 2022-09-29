@@ -1,34 +1,38 @@
-import {
-    AppBar,
-    Box,
-    Button,
-    IconButton,
-    styled,
-    Toolbar,
-} from '@mui/material';
+import React, { Dispatch } from 'react';
+import { Box, Button, IconButton, styled, Toolbar } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { AccountCircle } from '@mui/icons-material';
 
-export const menus = ['TimeTable', 'Schedule'];
-export const pages = ['/table', '/week'];
+export const menus = ['예약관리', '예약하기'];
+export const pages = ['/reception', '/schedule'];
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+})<TopBarProp>(({ theme, isOpen, drawerWidth }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(isOpen && {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    }),
 }));
 
-export const paddingAppSpace = () => {
-    return <DrawerHeader></DrawerHeader>;
-};
-
-interface TopBarProp {}
+interface TopBarProp {
+    isOpen: boolean;
+    setIsOpen: Dispatch<React.SetStateAction<boolean>>;
+    drawerWidth: number;
+}
 
 const TopBar = (props: TopBarProp) => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -41,19 +45,29 @@ const TopBar = (props: TopBarProp) => {
         router.push(pages[menuId]);
     };
 
+    const handleDrawerIcon = () => {
+        props.setIsOpen(props.isOpen ? false : true);
+    };
+
     return (
         <>
-            <AppBar position="fixed">
+            <AppBar
+                position="fixed"
+                isOpen={props.isOpen}
+                setIsOpen={props.setIsOpen}
+                drawerWidth={props.drawerWidth}
+            >
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
+                        onClick={handleDrawerIcon}
                         edge="start"
                         sx={{
                             marginRight: 5,
                         }}
                     >
-                        <MenuIcon />
+                        {props.isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
                     </IconButton>
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>

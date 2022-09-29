@@ -11,14 +11,6 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-interface ProfileProps {
-    photo?: string;
-    fullname: string;
-    email: string;
-    contact?: string;
-    bio?: string;
-}
-
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -32,30 +24,23 @@ const InputField = styled(TextField)<TextFieldProps>(({ theme }) => ({
     marginBottom: '1em',
 }));
 
-const Profile = (props: ProfileProps) => {
+interface ShopProfileProps {}
+
+const ShopProfile = (props: ShopProfileProps) => {
     return (
         <>
             <Container component="main" maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>내 정보 수정</CenteredText>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginBottom: '1em',
-                    }}
-                >
-                    <Avatar>N</Avatar>
-                </Box>
-                <CenteredText fontWeight={700}>{props.email}</CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>
+                    예약 가게 등록
+                </CenteredText>
                 <InputField
                     required
                     fullWidth
                     id="fullname"
                     name="fullname"
-                    label="이름"
+                    label="상호"
                     autoComplete="fullname"
                     autoFocus
-                    defaultValue={props.fullname}
                     size="small"
                 />
                 <InputField
@@ -72,9 +57,11 @@ const Profile = (props: ProfileProps) => {
                     fullWidth
                     id="bio"
                     name="bio"
-                    label="특이사항"
+                    label="설명"
                     autoComplete="bio"
                     size="small"
+                    multiline
+                    minRows={4}
                 />
                 <Button
                     type="submit"
@@ -89,4 +76,4 @@ const Profile = (props: ProfileProps) => {
     );
 };
 
-export default Profile;
+export default ShopProfile;

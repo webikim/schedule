@@ -84,10 +84,11 @@ const SignUp = (props: SignUpProps) => {
                                 <TextField
                                     autoComplete="fullname"
                                     name="fullname"
-                                    required
-                                    fullWidth
                                     id="fullname"
                                     label="이름"
+                                    size="small"
+                                    required
+                                    fullWidth
                                     autoFocus
                                 />
                             </Grid>
@@ -98,6 +99,7 @@ const SignUp = (props: SignUpProps) => {
                                     id="email"
                                     name="email"
                                     label="이메일"
+                                    size="small"
                                     autoComplete="email"
                                 />
                             </Grid>
@@ -109,6 +111,7 @@ const SignUp = (props: SignUpProps) => {
                                     type="password"
                                     id="password"
                                     label="암호"
+                                    size="small"
                                     autoComplete="new-password"
                                 />
                             </Grid>

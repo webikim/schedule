@@ -77,8 +77,9 @@ const SignIn = (props: SignInProps) => {
                             required
                             fullWidth
                             id="email"
-                            label="이메일"
                             name="email"
+                            label="이메일"
+                            size="small"
                             autoComplete="email"
                             autoFocus
                         />
@@ -88,6 +89,7 @@ const SignIn = (props: SignInProps) => {
                             fullWidth
                             name="password"
                             label="암호"
+                            size="small"
                             type="password"
                             id="password"
                             autoComplete="current-password"
