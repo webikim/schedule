@@ -11,14 +11,6 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-interface ProfileProps {
-    photo?: string;
-    fullname: string;
-    email: string;
-    contact?: string;
-    bio?: string;
-}
-
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -32,7 +24,15 @@ const InputField = styled(TextField)<TextFieldProps>(({ theme }) => ({
     marginBottom: '1em',
 }));
 
-const Profile = (props: ProfileProps) => {
+interface Props {
+    photo?: string;
+    fullname: string;
+    email: string;
+    contact?: string;
+    bio?: string;
+}
+
+const Profile = (props: Props) => {
     return (
         <>
             <Container component="main" maxWidth="xs">

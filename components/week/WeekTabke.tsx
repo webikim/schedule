@@ -91,7 +91,7 @@ const renderWeekHeader = (weekData: WeekData[]) => {
     return <> {Children.toArray(weekHeader)} </>;
 };
 
-const renderWeeklySchedule = (props: WeekProps, weekData: WeekData[]) => {
+const renderWeeklySchedule = (props: Props, weekData: WeekData[]) => {
     const schedules: JSX.Element[] = [];
     weekData.map((each) => {
         schedules.push(
@@ -103,14 +103,14 @@ const renderWeeklySchedule = (props: WeekProps, weekData: WeekData[]) => {
     return <> {Children.toArray(schedules)} </>;
 };
 
-interface WeekProps {
+interface Props {
     start: number;
     end: number;
     slotsPerHour: number;
     date: Date;
 }
 
-const WeekTable = (props: WeekProps) => {
+const WeekTable = (props: Props) => {
     const hourData = getHours(props.start, props.end);
     const weekData = getWeekData(props.date);
     return (

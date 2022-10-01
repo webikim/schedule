@@ -1,18 +1,20 @@
 import React, { ReactNode, useContext, useState } from 'react';
-import { Container, useTheme } from '@mui/material';
+import { Box, Container, CssBaseline, useTheme } from '@mui/material';
 import NotificationContext from '../../store/notification-context';
 import NotificationBar from '../ui/NotificationBar';
 import TopBar from './TopBar';
-import LeftDrawer, { DrawerHeader } from './LeftDrawer';
+import LeftDrawer from './LeftDrawer';
+import LeftMenu from '../menu/LeftMenu';
 
 const drawerWidth = 240;
+const drawerHeader = '69px';
 
 interface LaytoutProps {
     children?: ReactNode;
 }
 
 const Layout = (props: LaytoutProps) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState('false');
     const notificationCtx = useContext(NotificationContext);
     const theme = useTheme();
 
@@ -26,24 +28,36 @@ const Layout = (props: LaytoutProps) => {
 
     return (
         <>
-            <TopBar
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                drawerWidth={drawerWidth}
-            />
-            <LeftDrawer isOpen={isOpen} drawerWidth={drawerWidth} />
-            <main>
-                <Container sx={{ marginTop: '2em', flexGrow: 1 }}>
-                    <DrawerHeader />
+            <Box sx={{ display: 'flex', height: '100vh' }}>
+                <CssBaseline />
+                <TopBar
+                    isopen={isOpen}
+                    setIsOpen={setIsOpen}
+                    drawerwidth={drawerWidth}
+                />
+                <LeftDrawer
+                    isopen={isOpen}
+                    drawerwidth={drawerWidth}
+                    drawerheader={drawerHeader}
+                >
+                    <LeftMenu isOpen={isOpen} />
+                </LeftDrawer>
+                <Box component="main" sx={{ flexGrow: 1, paddingTop: '69px' }}>
                     {props.children}
-                </Container>
-            </main>
-            <footer></footer>
-            <NotificationBar
-                open={message !== null}
-                onClose={handleNotificationClose}
-                message={message}
-            ></NotificationBar>
+                </Box>
+                {/* <main>
+                    <Container sx={{ marginTop: '2em', flexGrow: 1 }}>
+                        <DrawerHeader />
+                        {props.children}
+                    </Container>
+                </main> */}
+                <footer></footer>
+                <NotificationBar
+                    open={message !== null}
+                    onClose={handleNotificationClose}
+                    message={message}
+                ></NotificationBar>
+            </Box>
         </>
     );
 };

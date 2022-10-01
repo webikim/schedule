@@ -24,9 +24,9 @@ const InputField = styled(TextField)<TextFieldProps>(({ theme }) => ({
     marginBottom: '1em',
 }));
 
-interface ShopProfileProps {}
+interface Props {}
 
-const ShopProfile = (props: ShopProfileProps) => {
+const ShopProfile = (props: Props) => {
     return (
         <>
             <Container component="main" maxWidth="xs">

@@ -5,7 +5,7 @@ import Head from 'next/head';
 import React from 'react';
 import WeekTable from '../../components/week/WeekTabke';
 
-interface SchedulePageProps {
+interface Props {
     scheduleConfig: {
         start: number;
         end: number;
@@ -13,7 +13,7 @@ interface SchedulePageProps {
     };
 }
 
-const SchedulePage = (props: SchedulePageProps) => {
+const SchedulePage = (props: Props) => {
     const { scheduleConfig } = props;
     return (
         <>

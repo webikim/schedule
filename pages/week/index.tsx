@@ -1,11 +1,12 @@
 import React from 'react';
 
-import path from "path";
-import fs from "fs/promises";
+import path from 'path';
+import fs from 'fs/promises';
 
-import Head from "next/head";
+import Head from 'next/head';
 
 import WeekTable from '../../components/week/WeekTabke';
+import { Container } from '@mui/material';
 
 interface WeekProps {
     scheduleConfig: {
@@ -23,13 +24,15 @@ function Week(props: WeekProps) {
                 <title>Schedule my works</title>
             </Head>
 
-            <WeekTable {...scheduleConfig} date={new Date()}></WeekTable>
+            <Container sx={{ marginTop: 5 }}>
+                <WeekTable {...scheduleConfig} date={new Date()}></WeekTable>
+            </Container>
         </>
     );
 }
 
 export async function getStaticProps() {
-    const dataPath = path.join(process.cwd(), "config", "scheduleit.json");
+    const dataPath = path.join(process.cwd(), 'config', 'scheduleit.json');
     const jsonData = await fs.readFile(dataPath);
     const data = JSON.parse(jsonData.toString());
 

@@ -14,11 +14,11 @@ import { signIn } from 'next-auth/react';
 import NotificationContext from '../../store/notification-context';
 import { useRouter } from 'next/router';
 
-interface SignInProps {
+interface Props {
     setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SignIn = (props: SignInProps) => {
+const SignIn = (props: Props) => {
     const notificationCtx = useContext(NotificationContext);
     const router = useRouter();
 

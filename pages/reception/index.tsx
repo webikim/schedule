@@ -1,12 +1,15 @@
+import { Container } from '@mui/material';
 import React from 'react';
 import ShopProfile from '../../components/reception/ShopProfile';
 
-interface ReceptionPageProps {}
+interface Props {}
 
-const ReceptionPage = (props: ReceptionPageProps) => {
+const ReceptionPage = (props: Props) => {
     return (
         <>
-            <ShopProfile></ShopProfile>
+            <Container sx={{ marginTop: 5 }}>
+                <ShopProfile></ShopProfile>
+            </Container>
         </>
     );
 };

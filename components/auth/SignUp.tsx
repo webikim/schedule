@@ -10,11 +10,11 @@ import {
 import React, { useContext } from 'react';
 import NotificationContext from '../../store/notification-context';
 
-interface SignUpProps {
+interface Props {
     setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SignUp = (props: SignUpProps) => {
+const SignUp = (props: Props) => {
     const notificationCtx = useContext(NotificationContext);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

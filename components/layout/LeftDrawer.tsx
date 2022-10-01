@@ -1,9 +1,10 @@
-import React from 'react';
-import { CSSObject, Divider, styled, Theme } from '@mui/material';
+import React, { ReactNode } from 'react';
+import { CSSObject, Divider, styled, Theme, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
+import { blueGrey } from '@mui/material/colors';
 
-const openedMixin = (theme: Theme, drawerWidth: number): CSSObject => ({
-    width: drawerWidth,
+const openedMixin = (theme: Theme, drawerwidth: number): CSSObject => ({
+    width: drawerwidth,
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -23,47 +24,69 @@ const closedMixin = (theme: Theme): CSSObject => ({
     },
 });
 
-export const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
+interface DrawerHeaderProps {
+    drawerheight: string;
+}
+
+const DrawerHeader = styled('div')<DrawerHeaderProps>(
+    ({ theme, drawerheight }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        backgroundColor: theme.palette.primary.dark,
+        height: drawerheight,
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+    })
+);
+
+interface DrawerProps {
+    isopen: string;
+    drawerwidth: number;
+}
 
 const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<LeftDrawerProps>(({ theme, isOpen, drawerWidth }) => ({
-    width: drawerWidth,
+})<DrawerProps>(({ theme, isopen, drawerwidth }) => ({
+    width: drawerwidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    ...(isOpen && {
-        ...openedMixin(theme, drawerWidth),
-        '& .MuiDrawer-paper': openedMixin(theme, drawerWidth),
-    }),
-    ...(!isOpen && {
-        ...closedMixin(theme),
-        '& .MuiDrawer-paper': closedMixin(theme),
-    }),
+    ...(isopen === 'true'
+        ? {
+              ...openedMixin(theme, drawerwidth),
+              '& .MuiDrawer-paper': openedMixin(theme, drawerwidth),
+          }
+        : {
+              ...closedMixin(theme),
+              '& .MuiDrawer-paper': closedMixin(theme),
+          }),
 }));
 
-interface LeftDrawerProps {
-    isOpen: boolean;
-    drawerWidth: number;
+interface Props {
+    isopen: string;
+    drawerwidth: number;
+    drawerheader: string;
+    children?: ReactNode;
 }
 
-const LeftDrawer = (props: LeftDrawerProps) => {
+const LeftDrawer = (props: Props) => {
+    const theme = useTheme();
     return (
         <>
             <Drawer
                 variant="permanent"
-                isOpen={props.isOpen}
-                drawerWidth={props.drawerWidth}
+                isopen={props.isopen}
+                drawerwidth={props.drawerwidth}
+                PaperProps={{
+                    sx: {
+                        backgroundColor: blueGrey[50],
+                    },
+                }}
             >
-                <DrawerHeader />
+                <DrawerHeader drawerheight={props.drawerheader} />
                 <Divider />
+                {props.children}
             </Drawer>
         </>
     );

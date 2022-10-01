@@ -33,11 +33,11 @@ const InputField = styled(TextField)<TextFieldProps>(({ theme }) => ({
     marginBottom: '1em',
 }));
 
-interface PasswordProps {
+interface Props {
     email: string;
 }
 
-export default function Password(props: PasswordProps) {
+export default function Password(props: Props) {
     return (
         <>
             <Container component="main" maxWidth="xs">

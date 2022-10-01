@@ -1,4 +1,4 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch, useContext } from 'react';
 import { Box, Button, IconButton, styled, Toolbar } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -6,56 +6,62 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
 import { AccountCircle } from '@mui/icons-material';
+import MenuContext from '../../store/menuContext';
 
 export const menus = ['예약관리', '예약하기'];
 export const pages = ['/reception', '/schedule'];
 
+interface AppBarProps {
+    isopen: string;
+    drawerwidth: number;
+}
+
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<TopBarProp>(({ theme, isOpen, drawerWidth }) => ({
+})<AppBarProps>(({ theme, isopen, drawerwidth }) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    ...(isOpen && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
+    ...(isopen === 'true'
+        ? {
+              marginLeft: drawerwidth,
+              width: `calc(100% - ${drawerwidth}px)`,
+              transition: theme.transitions.create(['width', 'margin'], {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.enteringScreen,
+              }),
+          }
+        : undefined),
 }));
 
-interface TopBarProp {
-    isOpen: boolean;
-    setIsOpen: Dispatch<React.SetStateAction<boolean>>;
-    drawerWidth: number;
+interface Props {
+    isopen: string;
+    setIsOpen: Dispatch<React.SetStateAction<string>>;
+    drawerwidth: number;
 }
 
-const TopBar = (props: TopBarProp) => {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-        null
-    );
+const TopBar = (props: Props) => {
+    const menuCtx = useContext(MenuContext);
     const { data } = useSession();
     const router = useRouter();
 
     const handleClickMenu = (menuId: number) => () => {
+        menuCtx.setNavigation({ position: { top: menuId } });
         router.push(pages[menuId]);
     };
 
     const handleDrawerIcon = () => {
-        props.setIsOpen(props.isOpen ? false : true);
+        props.setIsOpen(props.isopen === 'true' ? 'false' : 'true');
     };
 
     return (
         <>
             <AppBar
                 position="fixed"
-                isOpen={props.isOpen}
-                setIsOpen={props.setIsOpen}
-                drawerWidth={props.drawerWidth}
+                isopen={props.isopen}
+                drawerwidth={props.drawerwidth}
             >
                 <Toolbar>
                     <IconButton
@@ -67,7 +73,11 @@ const TopBar = (props: TopBarProp) => {
                             marginRight: 5,
                         }}
                     >
-                        {props.isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+                        {props.isopen === 'true' ? (
+                            <ChevronLeftIcon />
+                        ) : (
+                            <MenuIcon />
+                        )}
                     </IconButton>
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>
