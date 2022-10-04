@@ -16,7 +16,7 @@ export const authOption: NextAuthOptions = {
     providers: [CredentialsProvider({
         credentials: {
             email: { label: "Email", type: "text" },
-            password: { label: "Password", type: "password"}
+            password: { label: "Password", type: "password" }
         },
         async authorize(credentials) {
             const client = await connectMongo();
@@ -29,14 +29,14 @@ export const authOption: NextAuthOptions = {
             }
 
             const isValid = await verifyPassword(credentials.password, user.password);
-            
+
             if (!isValid) {
                 throw new Error("signin failed.")
             }
             client.close();
-            return { email: user.email }
+            return { email: user.email, name: user.fullname }
         }
-    }) ]
+    })]
 }
 
 export default NextAuth(authOption);

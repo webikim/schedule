@@ -12,21 +12,25 @@ interface Props {
     title: string;
     icon: keyof typeof MUIcon;
     selIcon: keyof typeof MUIcon;
+    route: string;
+    selected: boolean;
     isOpen: boolean;
+    onClick: () => void;
 }
 
 const LeftMenuItem = (props: Props) => {
     const selected_color = blueGrey[700];
     const Icon = MUIcon[props.icon];
+    const InvIcon = MUIcon[props.selIcon];
     return (
         <ListItem
             key={props.title}
             disablePadding
             sx={{
                 display: 'block',
-                // background: props.selected ? selected_color : undefined,
+                background: props.selected ? selected_color : undefined,
             }}
-            // onClick={props.onClick}
+            onClick={props.onClick}
         >
             <ListItemButton
                 sx={{
@@ -41,16 +45,17 @@ const LeftMenuItem = (props: Props) => {
                         minWidth: 0,
                         mr: props.isOpen ? 3 : 'auto',
                         justifyContent: 'center',
+                        color: props.selected ? 'white' : undefined,
                     }}
                 >
                     {/* {props.selected ? props.invIcon : props.icon} */}
-                    <Icon />
+                    {props.selected ? <InvIcon /> : <Icon />}
                 </ListItemIcon>
                 <ListItemText
                     primary={props.title}
                     sx={{
                         opacity: props.isOpen ? 1 : 0,
-                        // color: props.selected ? 'white' : undefined,
+                        color: props.selected ? 'white' : undefined,
                     }}
                 />
             </ListItemButton>

@@ -8,15 +8,15 @@ import { getUserByEmail } from '../../lib/auth/auth-dao';
 import { connectMongo } from '../../lib/mongo-helper';
 import Profile from '../../components/user/Profile';
 import Password from '../../components/user/Password';
-import ShopProfile from '../../components/reception/ShopProfile';
 
 interface Props {
     fullname: string;
     email: string;
 }
 
-const UserPage = (props: Props) => {
+const UserSubPage = (props: Props) => {
     const router = useRouter();
+    const { sub } = router.query;
     useEffect(() => {
         getSession().then((session) => {
             if (!session) {
@@ -24,7 +24,6 @@ const UserPage = (props: Props) => {
             }
         });
     });
-    console.log('props = ', props);
     const title = props.fullname + '(' + props.email + ')';
     return (
         <>
@@ -34,8 +33,15 @@ const UserPage = (props: Props) => {
 
             <Grid container sx={{ marginTop: 5 }}>
                 <Grid item xs={12}>
-                    <Profile fullname={props.fullname} email={props.email} />
-                    {/* <Password email={props.email}></Password> */}
+                    {sub === 'profile' && (
+                        <Profile
+                            fullname={props.fullname}
+                            email={props.email}
+                        />
+                    )}
+                    {sub === 'password' && (
+                        <Password email={props.email}></Password>
+                    )}
                 </Grid>
             </Grid>
         </>
@@ -65,4 +71,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default UserPage;
+export default UserSubPage;

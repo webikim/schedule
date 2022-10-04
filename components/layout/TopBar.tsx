@@ -1,15 +1,23 @@
 import React, { Dispatch, useContext } from 'react';
-import { Box, Button, IconButton, styled, Toolbar } from '@mui/material';
+import {
+    Box,
+    Button,
+    IconButton,
+    styled,
+    Toolbar,
+    useTheme,
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
-import { AccountCircle } from '@mui/icons-material';
+import { AccountCircle, SettingsPowerRounded } from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 
-export const menus = ['예약관리', '예약하기'];
-export const pages = ['/reception', '/schedule'];
+export const menus = ['홈', '예약만들기', '예약하기'];
+export const pages = ['/', '/reception/create', '/schedule/create'];
+export const USER_MENU = menus.length - 1;
 
 interface AppBarProps {
     isopen: string;
@@ -46,14 +54,31 @@ const TopBar = (props: Props) => {
     const menuCtx = useContext(MenuContext);
     const { data } = useSession();
     const router = useRouter();
+    const theme = useTheme();
+    let position = menuCtx.navigation?.position;
+
+    if (!position) {
+        position = { top: -1 };
+        menuCtx.setNavigation({
+            position: position,
+        });
+    }
 
     const handleClickMenu = (menuId: number) => () => {
-        menuCtx.setNavigation({ position: { top: menuId } });
+        menuCtx.setNavigation({ position: { top: menuId - 1, left: 0 } });
+        if (menuId === 0) {
+            props.setIsOpen('false');
+        }
         router.push(pages[menuId]);
     };
 
-    const handleDrawerIcon = () => {
+    const handleClickDrawerIcon = () => {
         props.setIsOpen(props.isopen === 'true' ? 'false' : 'true');
+    };
+
+    const handleClickUser = () => {
+        menuCtx.setNavigation({ position: { top: USER_MENU, left: 0 } });
+        router.push('/user/profile');
     };
 
     return (
@@ -67,7 +92,7 @@ const TopBar = (props: Props) => {
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerIcon}
+                        onClick={handleClickDrawerIcon}
                         edge="start"
                         sx={{
                             marginRight: 5,
@@ -81,15 +106,26 @@ const TopBar = (props: Props) => {
                     </IconButton>
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>
-                        {menus.map((menu, index) => (
-                            <Button
-                                key={index}
-                                onClick={handleClickMenu(index)}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {menu}
-                            </Button>
-                        ))}
+                        {menus.map((menu, index) => {
+                            const background =
+                                index - 1 === position?.top
+                                    ? theme.palette.primary.dark
+                                    : undefined;
+                            return (
+                                <Button
+                                    key={index}
+                                    onClick={handleClickMenu(index)}
+                                    sx={{
+                                        my: 2,
+                                        color: 'white',
+                                        display: 'block',
+                                        backgroundColor: { background },
+                                    }}
+                                >
+                                    {menu}
+                                </Button>
+                            );
+                        })}
                     </Box>
                     {!data && (
                         <Button
@@ -109,7 +145,7 @@ const TopBar = (props: Props) => {
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
-                                onClick={() => router.push('/user')}
+                                onClick={handleClickUser}
                                 color="inherit"
                             >
                                 <AccountCircle />

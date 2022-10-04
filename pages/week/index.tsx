@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 
 import Head from 'next/head';
 
-import WeekTable from '../../components/week/WeekTabke';
+import WeekView from '../../components/calendar/WeekView';
 import { Container } from '@mui/material';
 
 interface WeekProps {
@@ -25,7 +25,7 @@ function Week(props: WeekProps) {
             </Head>
 
             <Container sx={{ marginTop: 5 }}>
-                <WeekTable {...scheduleConfig} date={new Date()}></WeekTable>
+                <WeekView {...scheduleConfig} date={new Date()}></WeekView>
             </Container>
         </>
     );
