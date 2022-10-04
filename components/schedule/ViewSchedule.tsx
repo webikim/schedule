@@ -32,16 +32,22 @@ const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-const ViewChoice = styled(Button)<ButtonProps>(({ theme }) => ({
+interface ViewChoiceProps extends ButtonProps {
+    selected: number;
+}
+
+const ViewChoice = styled(Button)<ViewChoiceProps>(({ theme, selected }) => ({
     marginTop: '0.4em',
     paddingTop: '0.2em',
     border: '1px solid',
-    borderColor: theme.palette.primary.main,
+    borderColor: selected === 1 ? 'gray' : 'lightgray',
     borderRadius: '4px',
     height: '2em',
     display: 'flex',
     alignContent: 'center',
     justifyContent: 'center',
+    backgroundColor: selected === 1 ? 'lightgray' : undefined,
+    color: selected === 1 ? 'black' : 'gray',
 }));
 
 const SlotText = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -108,10 +114,18 @@ const renderHeader = (
             >
                 {dayjs(date).format(format)}
             </Typography>
-            <ViewChoice size="small" onClick={handleClickDay}>
+            <ViewChoice
+                size="small"
+                onClick={handleClickDay}
+                selected={view === DAY_VIEW ? 1 : 0}
+            >
                 일
             </ViewChoice>
-            <ViewChoice size="small" onClick={handleClickMonth}>
+            <ViewChoice
+                size="small"
+                onClick={handleClickMonth}
+                selected={view === MONTH_VIEW ? 1 : 0}
+            >
                 월
             </ViewChoice>
         </Box>

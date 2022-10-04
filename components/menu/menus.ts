@@ -7,7 +7,7 @@ export const menus = [
             route: '/reception/create'
         },
         {
-            title: '예약 일정 관리',
+            title: '예약 관리',
             picon: 'ManageHistory',
             sicon: 'ManageHistory',
             route: '/reception/manage'

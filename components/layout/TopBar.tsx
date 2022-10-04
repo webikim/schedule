@@ -66,14 +66,14 @@ const TopBar = (props: Props) => {
 
     const handleClickMenu = (menuId: number) => () => {
         menuCtx.setNavigation({ position: { top: menuId - 1, left: 0 } });
-        if (menuId === 0) {
-            props.setIsOpen('false');
-        }
+        props.setIsOpen(menuId === 0 ? 'false' : 'true');
         router.push(pages[menuId]);
     };
 
     const handleClickDrawerIcon = () => {
-        props.setIsOpen(props.isopen === 'true' ? 'false' : 'true');
+        if (position && position.top !== undefined && position.top >= 0) {
+            props.setIsOpen(props.isopen === 'true' ? 'false' : 'true');
+        }
     };
 
     const handleClickUser = () => {

@@ -26,9 +26,7 @@ const ManageSchedule = () => {
     return (
         <>
             <Container maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>
-                    예약 일정 관리
-                </CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>의 예약 관리</CenteredText>
 
                 <MonthView
                     date={date}
