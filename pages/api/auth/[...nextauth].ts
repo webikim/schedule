@@ -33,7 +33,7 @@ export const authOption: NextAuthOptions = {
             if (!isValid) {
                 throw new Error("signin failed.")
             }
-            client.close();
+            await client.close();
             return { email: user.email, name: user.fullname }
         }
     })]

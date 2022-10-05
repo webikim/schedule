@@ -1,4 +1,4 @@
-import React, { Children, useState } from 'react';
+import React, { Children, useContext } from 'react';
 import MonthView from '../calendar/MonthView';
 import {
     Box,
@@ -8,12 +8,15 @@ import {
     ListItemButton,
     ListItemText,
     styled,
-    Tooltip,
     Typography,
     TypographyProps,
 } from '@mui/material';
 import { Schedule } from '../../lib/dao/schedule-dao';
 import { Delete, Edit } from '@mui/icons-material';
+import NotificationContext, {
+    NotificationContextInterface,
+} from '../../store/notification-context';
+import { NextRouter, useRouter } from 'next/router';
 
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
@@ -24,67 +27,91 @@ const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontWeight: '700',
 }));
 
-const renderScheduleList = (data: Schedule[]) => {
-    if (data && data.length > 0) {
-        const schedules: JSX.Element[] = [];
-        const handleClickSchedule =
-            () => (event: React.MouseEvent<HTMLElement>) => {
-                event.preventDefault();
-                console.log('item clicked');
-            };
-        const handleClickEdit =
-            () => (event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                console.log('edit clicked');
-            };
-        const handleClickDelete =
-            () => (event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                console.log('delete clicked');
-            };
-        data.map((each) => {
-            schedules.push(
-                <ListItem
-                    component="div"
-                    disablePadding
-                    sx={{ borderBottom: 'lightgray 1px solid' }}
-                >
-                    <ListItemButton
-                        sx={{ height: '2em' }}
-                        onClick={handleClickSchedule()}
-                    >
-                        <ListItemText
-                            primary={each.title}
-                            primaryTypographyProps={{
-                                fontWeight: 'medium',
-                            }}
-                        />
-                    </ListItemButton>
-                    <IconButton onClick={handleClickEdit()}>
-                        <Edit />
-                    </IconButton>
-                    <IconButton onClick={handleClickDelete()}>
-                        <Delete />
-                    </IconButton>
-                </ListItem>
-            );
-        });
-        return <>{Children.toArray(schedules)}</>;
+const renderScheduleList = (
+    data: Schedule[],
+    update: React.Dispatch<React.SetStateAction<Schedule[]>>,
+    router: NextRouter,
+    notificationCtx: NotificationContextInterface
+) => {
+    if (!data || (data && data.length === 0)) {
+        return <Typography>먼저 예약을 만드세요.</Typography>;
     }
-    return <Typography>먼저 예약을 만드세요.</Typography>;
+
+    const schedules: JSX.Element[] = [];
+    const handleClickSchedule =
+        () => (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            console.log('item clicked');
+        };
+    const handleClickEdit =
+        (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            router.replace('/reception/manage/' + data[index].id);
+        };
+    const handleClickDelete =
+        (index: number) =>
+        async (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            const response = await fetch('/api/schedule/' + data[index].id, {
+                method: 'DELETE',
+            });
+            console.log('delete clicked ', response);
+            data.splice(index, 1);
+            update([...data]);
+            notificationCtx.showNotification({
+                message: '예약작업이 삭제되었습니다.',
+                status: 'success',
+            });
+        };
+    data.map((each, index) => {
+        schedules.push(
+            <ListItem
+                component="div"
+                disablePadding
+                sx={{ borderBottom: 'lightgray 1px solid' }}
+            >
+                <ListItemButton
+                    sx={{ height: '2em' }}
+                    onClick={handleClickSchedule()}
+                >
+                    <ListItemText
+                        primary={each.title}
+                        primaryTypographyProps={{
+                            fontWeight: 'medium',
+                        }}
+                    />
+                </ListItemButton>
+                <IconButton onClick={handleClickEdit(index)}>
+                    <Edit />
+                </IconButton>
+                <IconButton onClick={handleClickDelete(index)}>
+                    <Delete />
+                </IconButton>
+            </ListItem>
+        );
+    });
+    return <>{Children.toArray(schedules)}</>;
 };
 
 interface Props {
     schedules: Schedule[];
+    update: React.Dispatch<React.SetStateAction<Schedule[]>>;
 }
 
 const ManageSchedule = (props: Props) => {
-    const [date, setDate] = useState(new Date());
+    const router = useRouter();
+    const notificationCtx = useContext(NotificationContext);
+
     return (
         <>
             <Container maxWidth="xs">
                 <CenteredText sx={{ fontSize: 20 }}>예약 관리</CenteredText>
-                {renderScheduleList(props.schedules)}
+                {renderScheduleList(
+                    props.schedules,
+                    props.update,
+                    router,
+                    notificationCtx
+                )}
                 {/* <MonthView
                     date={date}
                     setdate={setDate}

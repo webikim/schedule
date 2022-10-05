@@ -57,9 +57,32 @@ export const getSchedule = async (client: MongoClient, id: string) => {
             timefrom: rawschedule.timefrom,
             timeto: rawschedule.timeto,
             offday: rawschedule.offday || null,
-            created: rawschedule.created,
+            created: rawschedule.created.toISOString(),
             createdby: rawschedule.createdby
         }
     }
     return null;
+}
+
+export const updateSchedule = async (client: MongoClient, id: string, schedule: Schedule) => {
+    const db = client.db(MONGODB_DB);
+    const col = db.collection<Schedule>(SCHEDULE_COLLECTION);
+    return await col.updateOne({ _id: new ObjectId(id) }, {
+        $set: {
+            title: schedule.title,
+            desc: schedule.desc,
+            contact: schedule.contact,
+            datefrom: schedule.datefrom,
+            dateto: schedule.dateto,
+            timefrom: schedule.timefrom,
+            timeto: schedule.timeto,
+            offday: schedule.offday
+        }
+    }, { upsert: false })
+}
+
+export const deleteSchedule = async (client: MongoClient, id: string) => {
+    const db = client.db(MONGODB_DB);
+    const col = db.collection<Schedule>(SCHEDULE_COLLECTION);
+    return await col.deleteOne({ _id: new ObjectId(id) });
 }

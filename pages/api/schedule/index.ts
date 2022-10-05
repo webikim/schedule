@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { putSchedule, Schedule } from "../../../lib/dao/schedule-dao";
 import { connectMongo } from "../../../lib/mongo-helper"
 

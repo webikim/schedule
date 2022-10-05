@@ -5,7 +5,7 @@ export type Notification = {
     status: string;
 };
 
-interface NotificationContextInterface {
+export interface NotificationContextInterface {
     notification: Notification | null;
     showNotification: (notification: Notification) => void;
     hideNotification: () => void;

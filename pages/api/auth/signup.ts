@@ -29,7 +29,7 @@ const handler = async (req: SignupApiRequest, res: SignupApiResponse) => {
     const dbuser = await getUserByEmail(client, email);
     if (dbuser) {
         res.status(422).json({ message: 'User already exist with same email' })
-        client.close();
+        await client.close();
         return;
     }
 
@@ -41,7 +41,7 @@ const handler = async (req: SignupApiRequest, res: SignupApiResponse) => {
     });
 
     res.status(201).json({ message: 'Created user.' })
-    client.close();
+    await client.close();
 }
 
 export default handler;
