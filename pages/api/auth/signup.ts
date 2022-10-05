@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { hashNsalt } from "../../../lib/auth-helper";
-import { getUserByEmail, putUser } from "../../../lib/auth/auth-dao";
+import { getUserByEmail, putUser, User } from "../../../lib/dao/user-dao";
 import { connectMongo } from "../../../lib/mongo-helper"
 
 const MONGODB_DB = process.env.MONGODB_DB;
@@ -10,11 +10,7 @@ if (!MONGODB_DB) {
 }
 
 interface SignupApiRequest extends NextApiRequest {
-    body: {
-        fullname: string;
-        email: string;
-        password: string;
-    };
+    body: User
 }
 
 interface SignupApiResponse extends NextApiResponse {

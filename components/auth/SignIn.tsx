@@ -37,7 +37,7 @@ const SignIn = (props: Props) => {
 
         if (!response!.ok) {
             notificationCtx.showNotification({
-                message: 'Signin failed.',
+                message: '로그인에 실패했습니다.',
                 status: 'error',
             });
 
@@ -47,7 +47,7 @@ const SignIn = (props: Props) => {
         router.replace('/');
 
         notificationCtx.showNotification({
-            message: 'Signin success',
+            message: '로그인에 성공했습니다.',
             status: 'success',
         });
     };

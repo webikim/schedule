@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { verifyPassword } from "../../../lib/auth-helper";
-import { getUserByEmail } from "../../../lib/auth/auth-dao";
+import { getUserByEmail } from "../../../lib/dao/user-dao";
 import { connectMongo } from "../../../lib/mongo-helper";
 
 export const authOption: NextAuthOptions = {

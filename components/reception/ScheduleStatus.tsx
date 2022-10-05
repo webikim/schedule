@@ -52,8 +52,8 @@ const renderHeader = (
     };
     return (
         <Box sx={{ display: 'flex' }}>
-            <IconButton>
-                <ArrowBackIosNewIcon onClick={handleClickPrev} />
+            <IconButton onClick={handleClickPrev}>
+                <ArrowBackIosNewIcon />
             </IconButton>
             <Typography
                 sx={{
@@ -66,8 +66,8 @@ const renderHeader = (
             >
                 {dayjs(date).format('YYYY.M.D')}
             </Typography>
-            <IconButton>
-                <ArrowForwardIosIcon onClick={handleClickNext} />
+            <IconButton onClick={handleClickNext}>
+                <ArrowForwardIosIcon />
             </IconButton>
         </Box>
     );

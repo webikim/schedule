@@ -79,11 +79,8 @@ const renderHeader = (
                 }}
             >
                 <Box sx={{ display: 'flex' }}>
-                    <IconButton>
-                        <ArrowBackIosNewIcon
-                            onClick={handleClickPrev}
-                            sx={{ color: 'white' }}
-                        />
+                    <IconButton onClick={handleClickPrev}>
+                        <ArrowBackIosNewIcon sx={{ color: 'white' }} />
                     </IconButton>
                     <Typography
                         sx={{
@@ -96,11 +93,8 @@ const renderHeader = (
                     >
                         {date.getFullYear() + '. ' + (date.getMonth() + 1)}
                     </Typography>
-                    <IconButton>
-                        <ArrowForwardIosIcon
-                            onClick={handleClickNext}
-                            sx={{ color: 'white' }}
-                        />
+                    <IconButton onClick={handleClickNext}>
+                        <ArrowForwardIosIcon sx={{ color: 'white' }} />
                     </IconButton>
                 </Box>
             </Border>

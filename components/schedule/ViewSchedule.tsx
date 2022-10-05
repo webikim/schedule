@@ -98,11 +98,11 @@ const renderHeader = (
     const format = view === DAY_VIEW ? 'YYYY.M.D' : 'YYYY.M';
     return (
         <Box sx={{ display: 'flex' }}>
-            <IconButton>
-                <ArrowBackIosNewIcon onClick={handleClickPrev} />
+            <IconButton onClick={handleClickPrev}>
+                <ArrowBackIosNewIcon />
             </IconButton>
-            <IconButton>
-                <ArrowForwardIosIcon onClick={handleClickNext} />
+            <IconButton onClick={handleClickNext}>
+                <ArrowForwardIosIcon />
             </IconButton>
             <Typography
                 sx={{

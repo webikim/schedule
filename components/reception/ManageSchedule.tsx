@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import MonthView from '../calendar/MonthView';
 import { Container, styled, Typography, TypographyProps } from '@mui/material';
+import { Schedule } from '../../lib/dao/schedule-dao';
 
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
@@ -12,27 +12,27 @@ const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontWeight: '700',
 }));
 
-const ManageSchedule = () => {
+interface Props {
+    schedules: Schedule[];
+}
+
+const ManageSchedule = (props: Props) => {
     const [date, setDate] = useState(new Date());
-    let state = {
-        events: [
-            {
-                start: moment().toDate(),
-                end: moment().add(1, 'days').toDate(),
-                title: 'Some title',
-            },
-        ],
-    };
     return (
         <>
             <Container maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>의 예약 관리</CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>예약 관리</CenteredText>
 
-                <MonthView
+                {props.schedules.map((schedule, index) => (
+                    <>
+                        <Typography key={index}>{schedule.title}</Typography>
+                    </>
+                ))}
+                {/* <MonthView
                     date={date}
                     setdate={setDate}
                     hint="* 예약내용을 변경할 날짜를 선택하세요."
-                />
+                /> */}
             </Container>
         </>
     );

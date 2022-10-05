@@ -12,12 +12,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
-import { AccountCircle, SettingsPowerRounded } from '@mui/icons-material';
+import { AccountCircle } from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 
 export const menus = ['홈', '예약만들기', '예약하기'];
 export const pages = ['/', '/reception/create', '/schedule/create'];
 export const USER_MENU = menus.length - 1;
+
+export const APPBAR_OPEN = 'open';
+export const APPBAR_CLOSE = 'close';
 
 interface AppBarProps {
     isopen: string;
@@ -32,7 +35,7 @@ const AppBar = styled(MuiAppBar, {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    ...(isopen === 'true'
+    ...(isopen === APPBAR_OPEN
         ? {
               marginLeft: drawerwidth,
               width: `calc(100% - ${drawerwidth}px)`,
@@ -66,18 +69,21 @@ const TopBar = (props: Props) => {
 
     const handleClickMenu = (menuId: number) => () => {
         menuCtx.setNavigation({ position: { top: menuId - 1, left: 0 } });
-        props.setIsOpen(menuId === 0 ? 'false' : 'true');
+        props.setIsOpen(menuId === 0 ? APPBAR_CLOSE : APPBAR_OPEN);
         router.push(pages[menuId]);
     };
 
     const handleClickDrawerIcon = () => {
         if (position && position.top !== undefined && position.top >= 0) {
-            props.setIsOpen(props.isopen === 'true' ? 'false' : 'true');
+            props.setIsOpen(
+                props.isopen === APPBAR_OPEN ? APPBAR_CLOSE : APPBAR_OPEN
+            );
         }
     };
 
     const handleClickUser = () => {
         menuCtx.setNavigation({ position: { top: USER_MENU, left: 0 } });
+        props.setIsOpen(APPBAR_OPEN);
         router.push('/user/profile');
     };
 
@@ -98,7 +104,7 @@ const TopBar = (props: Props) => {
                             marginRight: 5,
                         }}
                     >
-                        {props.isopen === 'true' ? (
+                        {props.isopen === APPBAR_OPEN ? (
                             <ChevronLeftIcon />
                         ) : (
                             <MenuIcon />

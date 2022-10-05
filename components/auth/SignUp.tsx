@@ -42,9 +42,9 @@ const SignUp = (props: Props) => {
         });
 
         if (!response.ok) {
-            let message = 'Signup failed.';
+            let message = '가입에 실패하였습니다.';
             if (response.status === 422) {
-                message = 'Same email alredy signed up.';
+                message = '같은 이메일로 이미 가입되었습니다.';
             }
             notificationCtx.showNotification({
                 message: message,
@@ -54,7 +54,7 @@ const SignUp = (props: Props) => {
         }
 
         notificationCtx.showNotification({
-            message: 'Signup success.',
+            message: '가입되었습니다.',
             status: 'success',
         });
         console.log('success ', await response.json());

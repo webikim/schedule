@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { Grid } from '@mui/material';
-import { getUserByEmail } from '../../lib/auth/auth-dao';
+import { getUserByEmail } from '../../lib/dao/user-dao';
 import { connectMongo } from '../../lib/mongo-helper';
 import Profile from '../../components/user/Profile';
 import Password from '../../components/user/Password';

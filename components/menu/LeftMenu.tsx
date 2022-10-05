@@ -5,6 +5,7 @@ import { menus } from './menus';
 import * as MUIcon from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 import { useRouter } from 'next/router';
+import { APPBAR_OPEN } from '../layout/TopBar';
 
 const toIconType = (name: string) => {
     return name as keyof typeof MUIcon;
@@ -48,7 +49,7 @@ const LeftMenu = (props: Props) => {
                         selIcon={toIconType(menu.sicon)}
                         route={menu.route}
                         selected={left == index}
-                        isOpen={props.isOpen === 'true' ? true : false}
+                        isOpen={props.isOpen === APPBAR_OPEN ? true : false}
                         onClick={handleMenuClick(index, menu.route)}
                     />
                 ))}

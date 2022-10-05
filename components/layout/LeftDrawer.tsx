@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { CSSObject, Divider, styled, Theme, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { blueGrey } from '@mui/material/colors';
+import { APPBAR_OPEN } from './TopBar';
 
 const openedMixin = (theme: Theme, drawerwidth: number): CSSObject => ({
     width: drawerwidth,
@@ -52,7 +53,7 @@ const Drawer = styled(MuiDrawer, {
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    ...(isopen === 'true'
+    ...(isopen === APPBAR_OPEN
         ? {
               ...openedMixin(theme, drawerwidth),
               '& .MuiDrawer-paper': openedMixin(theme, drawerwidth),
