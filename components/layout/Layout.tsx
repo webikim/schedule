@@ -22,9 +22,10 @@ const Layout = (props: LaytoutProps) => {
         notificationCtx.hideNotification();
     };
 
-    const message = notificationCtx.notification
-        ? notificationCtx.notification.message
-        : null;
+    const notification = notificationCtx.notification;
+    // const message = notificationCtx.notification
+    //     ? notificationCtx.notification.message
+    //     : null;
 
     return (
         <>
@@ -53,9 +54,9 @@ const Layout = (props: LaytoutProps) => {
                 </main> */}
                 <footer></footer>
                 <NotificationBar
-                    open={message !== null}
+                    open={notification !== null}
                     onClose={handleNotificationClose}
-                    message={message}
+                    notification={notification}
                 ></NotificationBar>
             </Box>
         </>

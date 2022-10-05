@@ -1,4 +1,4 @@
-import React, { Dispatch, useContext } from 'react';
+import React, { Dispatch, useContext, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -60,12 +60,14 @@ const TopBar = (props: Props) => {
     const theme = useTheme();
     let position = menuCtx.navigation?.position;
 
-    if (!position) {
-        position = { top: -1 };
-        menuCtx.setNavigation({
-            position: position,
-        });
-    }
+    useEffect(() => {
+        if (!position) {
+            position = { top: -1 };
+            menuCtx.setNavigation({
+                position: position,
+            });
+        }
+    });
 
     const handleClickMenu = (menuId: number) => () => {
         menuCtx.setNavigation({ position: { top: menuId - 1, left: 0 } });
@@ -112,26 +114,27 @@ const TopBar = (props: Props) => {
                     </IconButton>
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>
-                        {menus.map((menu, index) => {
-                            const background =
-                                index - 1 === position?.top
-                                    ? theme.palette.primary.dark
-                                    : undefined;
-                            return (
-                                <Button
-                                    key={index}
-                                    onClick={handleClickMenu(index)}
-                                    sx={{
-                                        my: 2,
-                                        color: 'white',
-                                        display: 'block',
-                                        backgroundColor: { background },
-                                    }}
-                                >
-                                    {menu}
-                                </Button>
-                            );
-                        })}
+                        {data &&
+                            menus.map((menu, index) => {
+                                const background =
+                                    index - 1 === position?.top
+                                        ? theme.palette.primary.dark
+                                        : undefined;
+                                return (
+                                    <Button
+                                        key={index}
+                                        onClick={handleClickMenu(index)}
+                                        sx={{
+                                            my: 2,
+                                            color: 'white',
+                                            display: 'block',
+                                            backgroundColor: { background },
+                                        }}
+                                    >
+                                        {menu}
+                                    </Button>
+                                );
+                            })}
                     </Box>
                     {!data && (
                         <Button

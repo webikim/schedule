@@ -80,19 +80,17 @@ const SignIn = (props: Props) => {
                             name="email"
                             label="이메일"
                             size="small"
-                            autoComplete="email"
                             autoFocus
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
+                            id="password"
                             name="password"
                             label="암호"
                             size="small"
                             type="password"
-                            id="password"
-                            autoComplete="current-password"
                         />
                         <FormControlLabel
                             control={

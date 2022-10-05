@@ -1,9 +1,9 @@
 import React, { createContext, ReactNode, useState } from 'react';
 
-interface Notification {
+export type Notification = {
     message: string;
     status: string;
-}
+};
 
 interface NotificationContextInterface {
     notification: Notification | null;

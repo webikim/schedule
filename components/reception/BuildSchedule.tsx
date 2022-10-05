@@ -85,7 +85,7 @@ const BuildSchedule = () => {
 
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: '예약작업이 생성되지 않았습니다.',
+                message: '예로운 예약작업을 만들수 없습니다.',
                 status: 'error',
             });
             console.log('Schedule create failed.');

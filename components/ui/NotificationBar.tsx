@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { TransitionProps } from '@mui/material/transitions';
-import { Slide } from '@mui/material';
+import { Alert, AlertColor, Slide, Snackbar } from '@mui/material';
+import { Notification } from '../../store/notification-context';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -17,11 +17,11 @@ const Transition = React.forwardRef(function Transition(
 interface Props {
     open: boolean;
     onClose: () => void;
-    message: string | null;
+    notification: Notification | null;
 }
 
 const NotificationBar = (props: Props) => {
-    const { open, onClose, message } = props;
+    const { open, onClose, notification } = props;
     const handleClose = (
         event: React.SyntheticEvent | Event,
         reason?: string
@@ -52,10 +52,25 @@ const NotificationBar = (props: Props) => {
                 open={open}
                 autoHideDuration={2000}
                 onClose={handleClose}
-                message={message}
                 action={action}
                 TransitionComponent={Transition}
-            />
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={
+                        notification
+                            ? (notification!.status as AlertColor)
+                            : undefined
+                    }
+                    sx={{
+                        width: '100%',
+                        backgroundColor: 'black',
+                        color: 'white',
+                    }}
+                >
+                    {notification?.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
