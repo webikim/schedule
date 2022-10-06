@@ -4,7 +4,7 @@ import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import ScheduleList from '../../../components/reception/ScheduleList';
+import ScheduleList from '../../../components/schedule/ScheduleList';
 import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 

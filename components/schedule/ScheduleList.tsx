@@ -25,7 +25,11 @@ const ScheduleList = (props: Props) => {
         (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
             console.log('item clicked');
-            router.replace('/reception/status/' + schedules[index].id);
+            router.replace(
+                '/schedule/status/' +
+                    schedules[index].id +
+                    '?back=/schedule/status'
+            );
         };
     schedules.map((each, index) => {
         scheduleList.push(

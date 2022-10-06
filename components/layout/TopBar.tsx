@@ -16,7 +16,7 @@ import { AccountCircle } from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 
 export const menus = ['홈', '예약만들기', '예약하기'];
-export const pages = ['/', '/reception/create', '/schedule/create'];
+export const pages = ['/', '/schedule/create', '/reserve/register'];
 export const USER_MENU = menus.length - 1;
 
 export const APPBAR_OPEN = 'open';

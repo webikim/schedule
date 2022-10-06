@@ -9,7 +9,7 @@ import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { useContext } from 'react';
-import BuildScheduleForm from '../../../components/reception/BuildScheduleForm';
+import BuildScheduleForm from '../../../components/schedule/BuildScheduleForm';
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 import NotificationContext from '../../../store/notification-context';
@@ -74,7 +74,7 @@ const UpdateSchedulePage = (props: Props) => {
                     <ChevronLeftIcon />
                     <LinkText
                         onClick={() => {
-                            router.replace('/reception/manage/');
+                            router.replace('/schedule/manage/');
                         }}
                     >
                         목록화면으로

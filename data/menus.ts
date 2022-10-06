@@ -4,19 +4,19 @@ export const menus = [
             title: '예약 만들기',
             picon: 'BorderColor',
             sicon: 'BorderColorOutlined',
-            route: '/reception/create'
+            route: '/schedule/create'
         },
         {
             title: '예약 관리',
             picon: 'ManageHistory',
             sicon: 'ManageHistory',
-            route: '/reception/manage'
+            route: '/schedule/manage'
         },
         {
             title: '예약 현황',
             picon: 'WatchLater',
             sicon: 'WatchLaterOutlined',
-            route: '/reception/status'
+            route: '/schedule/status'
         },
     ],
     [
@@ -24,19 +24,19 @@ export const menus = [
             title: '예약 하기',
             picon: 'CheckBox',
             sicon: 'CheckBoxOutlined',
-            route: '/schedule/create'
+            route: '/reserve/register'
         },
         {
             title: '예약 확인',
             picon: 'CalendarMonth',
             sicon: 'CalendarMonthOutlined',
-            route: '/schedule/view'
+            route: '/reserve/status'
         },
         {
             title: '자주하는 예약',
             picon: 'Repeat',
             sicon: 'RepeatOn',
-            route: '/schedule/favorite'
+            route: '/reserve/favorite'
         },
     ],
     [

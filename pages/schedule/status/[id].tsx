@@ -9,7 +9,7 @@ import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import DayScheduleStatus from '../../../components/reception/DayScheduleStatus';
+import DayScheduleStatus from '../../../components/schedule/DayScheduleStatus';
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -33,6 +33,7 @@ const LinkText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 interface Props {
     schedule: Schedule;
+    routeback: string;
 }
 
 const DayScheduleStatusPage = (props: Props) => {
@@ -46,7 +47,7 @@ const DayScheduleStatusPage = (props: Props) => {
                 <ChevronLeftIcon />
                 <LinkText
                     onClick={() => {
-                        router.replace('/reception/status/');
+                        router.replace(props.routeback);
                     }}
                 >
                     목록화면으로
@@ -73,7 +74,7 @@ export const getServerSideProps = async (
     context: GetServerSidePropsContext
 ) => {
     const session = await getSession({ req: context.req });
-    const { id } = context.query;
+    const { id, back } = context.query;
     // console.log('... re-rendered...');
     if (session && id) {
         const client = await connectMongo();
@@ -82,6 +83,7 @@ export const getServerSideProps = async (
         return {
             props: {
                 schedule: schedule,
+                routeback: back || '',
             },
         };
     }

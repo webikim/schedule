@@ -1,16 +1,13 @@
-import { Container } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import BuildSchedule from '../../components/reception/BuildSchedule';
-import { Schedule } from '../../lib/dao/schedule-dao';
+import ViewSchedule from '../../components/reserve/ViewSchedule';
 
-interface Props {
-    schedules: Schedule[];
-}
+interface Props {}
 
-const CreateSchedulePage = (props: Props) => {
+const ScheduleSubPage = (props: Props) => {
     const router = useRouter();
     useEffect(() => {
         getSession().then((session) => {
@@ -19,18 +16,19 @@ const CreateSchedulePage = (props: Props) => {
             }
         });
     });
-    const title = '예약만들기';
+
+    const title = '예약하기';
     return (
         <>
             <Head>
                 <title>{title}</title>
             </Head>
 
-            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
-                <BuildSchedule />
+            <Container sx={{ marginTop: 5 }}>
+                <ViewSchedule date={new Date()} />
             </Container>
         </>
     );
 };
 
-export default CreateSchedulePage;
+export default ScheduleSubPage;

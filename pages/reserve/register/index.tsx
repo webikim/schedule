@@ -1,16 +1,17 @@
-import { Container, Grid } from '@mui/material';
+import { Container } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
-import RegisterSchedule from '../../components/schedule/RegisterSchedule';
-import ViewSchedule from '../../components/schedule/ViewSchedule';
+import React, { useContext, useEffect } from 'react';
+import { buildNavigation } from '../../../components/menu/menuUtil';
+import RegisterSchedule from '../../../components/reserve/RegisterSchedule';
+import MenuContext from '../../../store/menuContext';
 
 interface Props {}
 
 const ScheduleSubPage = (props: Props) => {
     const router = useRouter();
-    const { sub } = router.query;
+    // buildNavigation(router.pathname);
     useEffect(() => {
         getSession().then((session) => {
             if (!session) {
@@ -27,8 +28,7 @@ const ScheduleSubPage = (props: Props) => {
             </Head>
 
             <Container sx={{ marginTop: 5 }}>
-                {sub === 'create' && <RegisterSchedule />}
-                {sub === 'view' && <ViewSchedule date={new Date()} />}
+                <RegisterSchedule />
             </Container>
         </>
     );

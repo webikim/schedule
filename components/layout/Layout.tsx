@@ -5,6 +5,9 @@ import NotificationBar from '../ui/NotificationBar';
 import TopBar from './TopBar';
 import LeftDrawer from './LeftDrawer';
 import LeftMenu from '../menu/LeftMenu';
+import { useRouter } from 'next/router';
+import MenuContext from '../../store/menuContext';
+import { buildNavigation } from '../menu/menuUtil';
 
 const drawerWidth = 240;
 const drawerHeader = '69px';
@@ -16,8 +19,18 @@ interface LaytoutProps {
 const Layout = (props: LaytoutProps) => {
     const [isOpen, setIsOpen] = useState('false');
     const notificationCtx = useContext(NotificationContext);
-    const theme = useTheme();
+    const router = useRouter();
+    const menuCtx = useContext(MenuContext);
 
+    if (menuCtx.navigation && menuCtx.navigation.position.top! < 0) {
+        console.log('pathname = ', router.pathname);
+        const position = buildNavigation(router.pathname);
+        if (position.top >= 0) {
+            menuCtx.setNavigation({ position: position });
+        }
+    }
+
+    const theme = useTheme();
     const handleNotificationClose = () => {
         notificationCtx.hideNotification();
     };

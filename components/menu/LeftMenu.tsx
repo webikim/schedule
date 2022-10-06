@@ -1,7 +1,7 @@
 import { TypeScriptConfig } from 'next/dist/server/config-shared';
 import React, { useContext, useEffect, useState } from 'react';
 import LeftMenuItem from './LeftMenuItem';
-import { menus } from './menus';
+import { menus } from '../../data/menus';
 import * as MUIcon from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 import { useRouter } from 'next/router';

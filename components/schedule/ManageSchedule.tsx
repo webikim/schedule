@@ -38,14 +38,17 @@ const renderScheduleList = (
 
     const schedules: JSX.Element[] = [];
     const handleClickSchedule =
-        () => (event: React.MouseEvent<HTMLElement>) => {
+        (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
             console.log('item clicked');
+            router.replace(
+                '/schedule/status/' + data[index].id + '?back=/schedule/manage/'
+            );
         };
     const handleClickEdit =
         (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
-            router.replace('/reception/manage/' + data[index].id);
+            router.replace('/schedule/manage/' + data[index].id);
         };
     const handleClickDelete =
         (index: number) =>
@@ -71,7 +74,7 @@ const renderScheduleList = (
             >
                 <ListItemButton
                     sx={{ height: '2em' }}
-                    onClick={handleClickSchedule()}
+                    onClick={handleClickSchedule(index)}
                 >
                     <ListItemText
                         primary={each.title}
