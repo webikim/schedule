@@ -57,6 +57,7 @@ const SignUp = (props: Props) => {
             message: '가입되었습니다.',
             status: 'success',
         });
+        props.setLogin(true);
         console.log('success ', await response.json());
     };
     return (

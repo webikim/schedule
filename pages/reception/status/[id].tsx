@@ -41,7 +41,7 @@ const DayScheduleStatusPage = (props: Props) => {
     const { timefrom, timeto, slots } = props.schedule;
     const title = props.schedule.title + ' 예약 현황';
     return (
-        <Container sx={{ marginTop: 5 }} maxWidth="xs">
+        <Container maxWidth="xs" sx={{ marginTop: 1 }}>
             <Box sx={{ display: 'flex' }}>
                 <ChevronLeftIcon />
                 <LinkText
@@ -53,16 +53,18 @@ const DayScheduleStatusPage = (props: Props) => {
                 </LinkText>
             </Box>
 
-            <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
-                {title}
-            </CenteredText>
-            <DayScheduleStatus
-                start={dayjs(timefrom).hour()}
-                end={dayjs(timeto).hour()}
-                slotsPerHour={parseInt(slots)}
-                date={date}
-                setDate={setDate}
-            />
+            <Box sx={{ marginTop: 4 }}>
+                <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
+                    {title}
+                </CenteredText>
+                <DayScheduleStatus
+                    start={dayjs(timefrom).hour()}
+                    end={dayjs(timeto).hour()}
+                    slotsPerHour={parseInt(slots)}
+                    date={date}
+                    setDate={setDate}
+                />
+            </Box>
         </Container>
     );
 };

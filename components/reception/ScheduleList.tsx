@@ -48,13 +48,7 @@ const ScheduleList = (props: Props) => {
             </ListItem>
         );
     });
-    return (
-        <>
-            <Container maxWidth="xs">
-                {Children.toArray(scheduleList)}
-            </Container>
-        </>
-    );
+    return <>{Children.toArray(scheduleList)}</>;
 };
 
 export default ScheduleList;

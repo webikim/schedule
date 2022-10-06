@@ -90,7 +90,7 @@ const BuildScheduleForm = (props: Props) => {
     return (
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Container component="main" maxWidth="xs">
+                <Box component="main" maxWidth="xs">
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
@@ -202,7 +202,7 @@ const BuildScheduleForm = (props: Props) => {
                             {schedule ? '수정하기' : '만들기'}
                         </Button>
                     </Box>
-                </Container>
+                </Box>
             </LocalizationProvider>
         </>
     );

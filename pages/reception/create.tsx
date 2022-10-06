@@ -26,7 +26,7 @@ const CreateSchedulePage = (props: Props) => {
                 <title>{title}</title>
             </Head>
 
-            <Container sx={{ marginTop: 5 }}>
+            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
                 <BuildSchedule />
             </Container>
         </>

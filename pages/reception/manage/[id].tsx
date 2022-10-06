@@ -69,7 +69,7 @@ const UpdateSchedulePage = (props: Props) => {
 
     return (
         <>
-            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
+            <Container maxWidth="xs" sx={{ marginTop: 1 }}>
                 <Box sx={{ display: 'flex' }}>
                     <ChevronLeftIcon />
                     <LinkText
@@ -80,17 +80,18 @@ const UpdateSchedulePage = (props: Props) => {
                         목록화면으로
                     </LinkText>
                 </Box>
-
-                <CenteredText sx={{ fontSize: 20 }}>예약 수정</CenteredText>
-                <BuildScheduleForm
-                    schedule={props.schedule}
-                    onSubmit={handleSubmit}
-                />
-                {/* <MonthView
+                <Box sx={{ marginTop: 4 }}>
+                    <CenteredText sx={{ fontSize: 20 }}>예약 수정</CenteredText>
+                    <BuildScheduleForm
+                        schedule={props.schedule}
+                        onSubmit={handleSubmit}
+                    />
+                    {/* <MonthView
                     date={date}
                     setdate={setDate}
                     hint="* 예약내용을 변경할 날짜를 선택하세요."
                 /> */}
+                </Box>
             </Container>
         </>
     );

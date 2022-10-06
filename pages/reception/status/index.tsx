@@ -42,7 +42,7 @@ const ScheduleStatusPage = (props: Props) => {
                 <title>{title}</title>
             </Head>
 
-            <Container sx={{ marginTop: 5 }}>
+            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
                 <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
                     예약 현황
                 </CenteredText>
