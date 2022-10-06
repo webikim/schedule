@@ -24,14 +24,13 @@ export const putSchedule = async (client: MongoClient, schedule: Schedule) => {
     return await db.collection(SCHEDULE_COLLECTION).insertOne(schedule);
 }
 
-export const getScheduleList = async (client: MongoClient, email: string) => {
+export const getScheduleList = async (client: MongoClient, email?: string) => {
     const db = client.db(MONGODB_DB);
     const col = db.collection<Schedule>(SCHEDULE_COLLECTION);
 
-    const query = { createdby: email }
-    const rawlist = await col.find(query)
+    const query = email ? { createdby: email } : {}
+    const rawlist = await col.find(query, { projection: { "_id": 1, "title": 1, "desc": 1, "created": 1 } })
         .toArray();
-    // console.log('rawlist = ', rawlist);
     return rawlist.map((each) => {
         return {
             id: each._id.toString(),

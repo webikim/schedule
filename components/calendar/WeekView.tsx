@@ -12,6 +12,25 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Container } from '@mui/system';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        select_time: {
+            en: '* Pick a time for me.',
+            kr: '* 예약할 시간을 선택하세요.',
+        },
+    },
+    label: {
+        reservation_title: {
+            en: 'Reserve a Seat',
+            kr: '예약하기',
+        },
+    },
+};
+
 class WeekData {
     day: number;
     date: Date;
@@ -23,7 +42,10 @@ class WeekData {
     }
 }
 
-const WeekString = ['일', '월', '화', '수', '목', '금', '토'];
+const WeekString = {
+    en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    kr: ['일', '월', '화', '수', '목', '금', '토'],
+};
 
 const WeekName = styled(Grid)<GridProps>(({ theme }) => ({
     boxShadow: 'rgba(0, 0, 0, 0.35) 0px 0px 1px;',
@@ -56,7 +78,7 @@ const getWeekData = (date: Date) => {
     const refDate = new Date(date);
     refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
 
-    const weekData = WeekString.map((each, index: number) => {
+    const weekData = WeekString[locale].map((each, index: number) => {
         refDate.setDate(refDate.getDate() + 1);
         return new WeekData(index, new Date(refDate));
     });
@@ -98,7 +120,7 @@ const renderWeekHeader = (weekData: WeekData[]) => {
         weekHeader.push(
             <Grid item xs={1.7}>
                 <WeekName sx={{ paddingTop: '0.5em' }}>
-                    <CenteredText>{WeekString[each.day]}</CenteredText>
+                    <CenteredText>{WeekString[locale][each.day]}</CenteredText>
                     <CenteredText>{each.date.getDate()}</CenteredText>
                 </WeekName>
             </Grid>
@@ -143,7 +165,7 @@ const WeekView = (props: Props) => {
                 <CenteredText
                     sx={{ fontSize: 20, fontWeight: '700', marginBottom: 2 }}
                 >
-                    예약 하기
+                    {getString(locale, strings.label.reservation_title)}
                 </CenteredText>
                 <Grid container sx={{ marginTop: 1, marginBottom: 1 }}>
                     {renderWeekNavi(date, setDate)}
@@ -155,7 +177,7 @@ const WeekView = (props: Props) => {
                         backgroundColor: 'lightgray',
                     }}
                 >
-                    * 예약할 시간을 선택하세요.
+                    {getString(locale, strings.message.select_time)}
                 </Typography>
                 <Grid container>{renderWeekHeader(weekData)}</Grid>
                 <Grid container>{renderSeperator(weekData)}</Grid>

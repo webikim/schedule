@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    Container,
     FormControl,
     FormControlLabel,
     FormLabel,
@@ -20,6 +19,64 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { Schedule } from '../../lib/dao/schedule-dao';
+
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        title: {
+            en: 'Title',
+            kr: '제목',
+        },
+        desc: {
+            en: 'Description',
+            kr: '설명',
+        },
+        contact: {
+            en: 'Contact',
+            kr: '연락처',
+        },
+        fromdate: {
+            en: 'From Date',
+            kr: '시작일',
+        },
+        todate: {
+            en: 'To Date',
+            kr: '종료일',
+        },
+        starttime: {
+            en: 'Start Time',
+            kr: '시작시간',
+        },
+        endtime: {
+            en: 'End Time',
+            kr: '종료시간',
+        },
+        duration: {
+            en: 'Duration',
+            kr: '시간간격',
+        },
+        hour: {
+            en: '1 Hour',
+            kr: '1시간 간격',
+        },
+        halfhour: {
+            en: '30 Min',
+            kr: '30분 간격',
+        },
+        create: {
+            en: 'Build Schedule',
+            kr: '만들기',
+        },
+        update: {
+            en: 'Update Schedule',
+            kr: '수정하기',
+        },
+    },
+};
 
 const InputField = styled(TextField)<TextFieldProps>(({ theme }) => ({
     marginBottom: '1em',
@@ -102,7 +159,7 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="title"
                             name="title"
-                            label="제목"
+                            label={getString(locale, strings.label.title)}
                             autoFocus
                             defaultValue={schedule && schedule.title}
                             size="small"
@@ -112,7 +169,7 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="desc"
                             name="desc"
-                            label="설명"
+                            label={getString(locale, strings.label.desc)}
                             defaultValue={schedule && schedule.desc}
                             size="small"
                             multiline
@@ -123,14 +180,17 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="contact"
                             name="contact"
-                            label="연락처"
+                            label={getString(locale, strings.label.contact)}
                             defaultValue={schedule && schedule.contact}
                             size="small"
                         />
 
                         <Box sx={{ display: 'flex' }}>
                             <DesktopDatePicker
-                                label="시작일"
+                                label={getString(
+                                    locale,
+                                    strings.label.fromdate
+                                )}
                                 inputFormat="MM/DD/YYYY"
                                 value={datefrom}
                                 onChange={handleChange(setDatefrom)}
@@ -142,7 +202,7 @@ const BuildScheduleForm = (props: Props) => {
                                 sx={{ paddingTop: '0.5em' }}
                             ></RemoveIcon>
                             <DesktopDatePicker
-                                label="종료일"
+                                label={getString(locale, strings.label.todate)}
                                 inputFormat="MM/DD/YYYY"
                                 value={dateto}
                                 onChange={handleChange(setDateto)}
@@ -154,7 +214,10 @@ const BuildScheduleForm = (props: Props) => {
 
                         <Box sx={{ display: 'flex' }}>
                             <TimePicker
-                                label="시작시간"
+                                label={getString(
+                                    locale,
+                                    strings.label.starttime
+                                )}
                                 value={timefrom}
                                 onChange={handleChange(setTimefrom)}
                                 renderInput={(params) => (
@@ -165,7 +228,7 @@ const BuildScheduleForm = (props: Props) => {
                                 sx={{ paddingTop: '0.5em' }}
                             ></RemoveIcon>
                             <TimePicker
-                                label="종료시간"
+                                label={getString(locale, strings.label.endtime)}
                                 value={timeto}
                                 onChange={handleChange(setTimeto)}
                                 renderInput={(params) => (
@@ -174,7 +237,9 @@ const BuildScheduleForm = (props: Props) => {
                             />
                         </Box>
                         <FormControl>
-                            <FormLabel id="slots-per-hour">시간간격</FormLabel>
+                            <FormLabel id="slots-per-hour">
+                                {getString(locale, strings.label.duration)}
+                            </FormLabel>
                             <RadioGroup
                                 row
                                 aria-labelledby="slots-per-hour"
@@ -184,12 +249,18 @@ const BuildScheduleForm = (props: Props) => {
                                 <FormControlLabel
                                     value="1"
                                     control={<Radio />}
-                                    label="1시간 간격"
+                                    label={getString(
+                                        locale,
+                                        strings.label.hour
+                                    )}
                                 />
                                 <FormControlLabel
                                     value="2"
                                     control={<Radio />}
-                                    label="30분 간격"
+                                    label={getString(
+                                        locale,
+                                        strings.label.halfhour
+                                    )}
                                 />
                             </RadioGroup>
                         </FormControl>
@@ -199,7 +270,9 @@ const BuildScheduleForm = (props: Props) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            {schedule ? '수정하기' : '만들기'}
+                            {schedule
+                                ? getString(locale, strings.label.update)
+                                : getString(locale, strings.label.create)}
                         </Button>
                     </Box>
                 </Box>

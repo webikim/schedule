@@ -17,6 +17,29 @@ import NotificationContext, {
 } from '../../store/notification-context';
 import { NextRouter, useRouter } from 'next/router';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        no_schedule: {
+            en: 'Need to create schedule.',
+            kr: '먼저 예약을 만드세요.',
+        },
+        deleted: {
+            en: 'Schedule is deleted.',
+            kr: '예약작업이 삭제되었습니다.',
+        },
+    },
+    label: {
+        manage_title: {
+            en: 'Manage Schedules',
+            kr: '예약 관리',
+        },
+    },
+};
+
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -33,7 +56,11 @@ const renderScheduleList = (
     notificationCtx: NotificationContextInterface
 ) => {
     if (!data || (data && data.length === 0)) {
-        return <Typography>먼저 예약을 만드세요.</Typography>;
+        return (
+            <Typography>
+                {getString(locale, strings.message.no_schedule)}
+            </Typography>
+        );
     }
 
     const schedules: JSX.Element[] = [];
@@ -61,7 +88,7 @@ const renderScheduleList = (
             data.splice(index, 1);
             update([...data]);
             notificationCtx.showNotification({
-                message: '예약작업이 삭제되었습니다.',
+                message: getString(locale, strings.message.deleted),
                 status: 'success',
             });
         };
@@ -107,7 +134,9 @@ const ManageSchedule = (props: Props) => {
     return (
         <>
             <Container maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>예약 관리</CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>
+                    {getString(locale, strings.label.manage_title)}
+                </CenteredText>
                 {renderScheduleList(
                     props.schedules,
                     props.update,

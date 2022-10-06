@@ -15,9 +15,30 @@ import { useSession, signOut } from 'next-auth/react';
 import { AccountCircle } from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 
-export const menus = ['홈', '예약만들기', '예약하기'];
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        signin_menu: {
+            en: 'Sign In',
+            kr: '로그인',
+        },
+        signout_menu: {
+            en: 'Sign Out',
+            kr: '로그아웃',
+        },
+    },
+};
+
+export const menus = {
+    en: ['Home', 'Schedule', 'Reserve'],
+    kr: ['홈', '예약만들기', '예약하기'],
+};
 export const pages = ['/', '/schedule/create', '/reserve/register'];
-export const USER_MENU = menus.length - 1;
+export const USER_MENU = menus[locale].length - 1;
 
 export const APPBAR_OPEN = 'open';
 export const APPBAR_CLOSE = 'close';
@@ -115,7 +136,7 @@ const TopBar = (props: Props) => {
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>
                         {data &&
-                            menus.map((menu, index) => {
+                            menus[locale].map((menu, index) => {
                                 const background =
                                     index - 1 === position?.top
                                         ? theme.palette.primary.dark
@@ -141,13 +162,13 @@ const TopBar = (props: Props) => {
                             color="inherit"
                             onClick={() => router.replace('/auth')}
                         >
-                            로그인
+                            {getString(locale, strings.label.signin_menu)}
                         </Button>
                     )}
                     {data && (
                         <>
                             <Button color="inherit" onClick={() => signOut()}>
-                                로그아웃
+                                {getString(locale, strings.label.signout_menu)}
                             </Button>
                             <IconButton
                                 size="large"

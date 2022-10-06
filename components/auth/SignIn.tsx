@@ -14,6 +14,45 @@ import { signIn } from 'next-auth/react';
 import NotificationContext from '../../store/notification-context';
 import { useRouter } from 'next/router';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        login_failed: {
+            en: 'Could not sign in.',
+            kr: '로그인에 실패했습니다.',
+        },
+        login_success: {
+            en: 'Signed in successful.',
+            kr: '로그인 되었습니다.',
+        },
+    },
+    label: {
+        login_title: {
+            en: 'Login',
+            kr: '로그린',
+        },
+        email: {
+            en: 'eMail',
+            kr: '이메일',
+        },
+        password: {
+            en: 'Password',
+            kr: '암호',
+        },
+        stay_connected: {
+            en: 'Stay Connected',
+            kr: '로그인 상태 유지',
+        },
+        to_signup: {
+            en: 'Let me Sign Up',
+            kr: '가입화면으로',
+        },
+    },
+};
+
 interface Props {
     setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -37,7 +76,7 @@ const SignIn = (props: Props) => {
 
         if (!response!.ok) {
             notificationCtx.showNotification({
-                message: '로그인에 실패했습니다.',
+                message: getString(locale, strings.message.login_failed),
                 status: 'error',
             });
 
@@ -47,7 +86,7 @@ const SignIn = (props: Props) => {
         router.replace('/');
 
         notificationCtx.showNotification({
-            message: '로그인에 성공했습니다.',
+            message: getString(locale, strings.message.login_success),
             status: 'success',
         });
     };
@@ -64,7 +103,7 @@ const SignIn = (props: Props) => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        로그인
+                        {getString(locale, strings.label.login_title)}
                     </Typography>
                     <Box
                         component="form"
@@ -78,7 +117,7 @@ const SignIn = (props: Props) => {
                             fullWidth
                             id="email"
                             name="email"
-                            label="이메일"
+                            label={getString(locale, strings.label.email)}
                             size="small"
                             autoFocus
                         />
@@ -88,7 +127,7 @@ const SignIn = (props: Props) => {
                             fullWidth
                             id="password"
                             name="password"
-                            label="암호"
+                            label={getString(locale, strings.label.password)}
                             size="small"
                             type="password"
                         />
@@ -96,7 +135,10 @@ const SignIn = (props: Props) => {
                             control={
                                 <Checkbox value="remember" color="primary" />
                             }
-                            label="로그인 상태 유지"
+                            label={getString(
+                                locale,
+                                strings.label.stay_connected
+                            )}
                         />
                         <Button
                             type="submit"
@@ -104,7 +146,7 @@ const SignIn = (props: Props) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            로그인
+                            {getString(locale, strings.label.login_title)}
                         </Button>
                         <Grid container justifyContent="flex-end">
                             {/* <Grid item xs>
@@ -118,7 +160,7 @@ const SignIn = (props: Props) => {
                                     variant="body2"
                                     onClick={() => props.setLogin(false)}
                                 >
-                                    {'가입화면으로'}
+                                    {getString(locale, strings.label.to_signup)}
                                 </Link>
                             </Grid>
                         </Grid>

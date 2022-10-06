@@ -18,6 +18,20 @@ import {
     setSlots,
 } from '../calendar/Hours';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        select_to_update: {
+            en: '* Select people to update status.',
+            kr: '* 예약변경을 하려면 예약자를 선택하세요.',
+        },
+    },
+    label: {},
+};
+
 interface FillerProps extends BoxProps {
     index: number;
 }
@@ -117,7 +131,7 @@ const DayScheduleStatus = (props: Props) => {
                         paddingLeft: 1,
                     }}
                 >
-                    * 예약변경을 하려면 예약자를 선택하세요.
+                    {getString(locale, strings.message.select_to_update)}
                 </Typography>
             </Box>
             <Grid container>

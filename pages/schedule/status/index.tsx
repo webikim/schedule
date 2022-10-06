@@ -8,6 +8,19 @@ import ScheduleList from '../../../components/schedule/ScheduleList';
 import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 
+import { getString } from '../../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        statue_title: {
+            en: 'Reservation Status',
+            kr: '예약 현황',
+        },
+    },
+};
 const scheduleConfig = {
     start: 7,
     end: 22,
@@ -44,7 +57,7 @@ const ScheduleStatusPage = (props: Props) => {
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
                 <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
-                    예약 현황
+                    {getString(locale, strings.label.statue_title)}
                 </CenteredText>
                 <ScheduleList schedules={props.schedules} />
 

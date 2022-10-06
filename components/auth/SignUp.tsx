@@ -10,6 +10,53 @@ import {
 import React, { useContext } from 'react';
 import NotificationContext from '../../store/notification-context';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        signup_failed: {
+            en: 'Could not sign up.',
+            kr: '가입에 실패했습니다.',
+        },
+        exist: {
+            en: 'Same email already exists.',
+            kr: '같은 이메일로 이미 가입되었습니다.',
+        },
+        signup_success: {
+            en: 'Signed up successfully.',
+            kr: '가입되었습니다.',
+        },
+    },
+    label: {
+        signup_title: {
+            en: 'Sign Up',
+            kr: '간편가입',
+        },
+        fullname: {
+            en: 'Full name',
+            kr: '이름',
+        },
+        email: {
+            en: 'eMail',
+            kr: '이메일',
+        },
+        password: {
+            en: 'Password',
+            kr: '암호',
+        },
+        signup_button: {
+            en: 'Join in',
+            kr: '가입하기',
+        },
+        to_signin: {
+            en: 'Go back to Sign In',
+            kr: '로그인화면으로',
+        },
+    },
+};
+
 interface Props {
     setLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -42,9 +89,9 @@ const SignUp = (props: Props) => {
         });
 
         if (!response.ok) {
-            let message = '가입에 실패하였습니다.';
+            let message = getString(locale, strings.message.signup_failed);
             if (response.status === 422) {
-                message = '같은 이메일로 이미 가입되었습니다.';
+                message = getString(locale, strings.message.exist);
             }
             notificationCtx.showNotification({
                 message: message,
@@ -54,7 +101,7 @@ const SignUp = (props: Props) => {
         }
 
         notificationCtx.showNotification({
-            message: '가입되었습니다.',
+            message: getString(locale, strings.message.signup_success),
             status: 'success',
         });
         props.setLogin(true);
@@ -72,7 +119,7 @@ const SignUp = (props: Props) => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        간편가입
+                        {getString(locale, strings.label.signup_title)}
                     </Typography>
                     <Box
                         component="form"
@@ -86,7 +133,10 @@ const SignUp = (props: Props) => {
                                     autoComplete="fullname"
                                     name="fullname"
                                     id="fullname"
-                                    label="이름"
+                                    label={getString(
+                                        locale,
+                                        strings.label.fullname
+                                    )}
                                     size="small"
                                     required
                                     fullWidth
@@ -99,7 +149,10 @@ const SignUp = (props: Props) => {
                                     fullWidth
                                     id="email"
                                     name="email"
-                                    label="이메일"
+                                    label={getString(
+                                        locale,
+                                        strings.label.email
+                                    )}
                                     size="small"
                                     autoComplete="email"
                                 />
@@ -111,7 +164,10 @@ const SignUp = (props: Props) => {
                                     name="password"
                                     type="password"
                                     id="password"
-                                    label="암호"
+                                    label={getString(
+                                        locale,
+                                        strings.label.password
+                                    )}
                                     size="small"
                                     autoComplete="new-password"
                                 />
@@ -123,7 +179,7 @@ const SignUp = (props: Props) => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            가입하기
+                            {getString(locale, strings.label.signup_button)}
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
@@ -132,7 +188,7 @@ const SignUp = (props: Props) => {
                                     variant="body2"
                                     onClick={() => props.setLogin(true)}
                                 >
-                                    로그인 화면으로
+                                    {getString(locale, strings.label.to_signin)}
                                 </Link>
                             </Grid>
                         </Grid>

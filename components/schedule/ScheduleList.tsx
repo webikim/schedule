@@ -9,6 +9,20 @@ import { useRouter } from 'next/router';
 import { Children } from 'react';
 import { Schedule } from '../../lib/dao/schedule-dao';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        no_schedule: {
+            en: 'Need to create schedule.',
+            kr: '먼저 예약을 만드세요.',
+        },
+    },
+    label: {},
+};
+
 interface Props {
     schedules: Schedule[];
 }
@@ -17,7 +31,11 @@ const ScheduleList = (props: Props) => {
     const { schedules } = props;
     const router = useRouter();
     if (!schedules || (schedules && schedules.length === 0)) {
-        return <Typography>먼저 예약을 만드세요.</Typography>;
+        return (
+            <Typography>
+                {getString(locale, strings.message.no_schedule)}
+            </Typography>
+        );
     }
 
     const scheduleList: JSX.Element[] = [];

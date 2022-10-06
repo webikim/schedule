@@ -15,6 +15,24 @@ import { connectMongo } from '../../../lib/mongo-helper';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useRouter } from 'next/router';
 
+import { getString } from '../../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        to_list: {
+            en: 'to list',
+            kr: '목록화면으로',
+        },
+        statue_title: {
+            en: ' Schedule',
+            kr: ' 예약 현황',
+        },
+    },
+};
+
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -40,7 +58,8 @@ const DayScheduleStatusPage = (props: Props) => {
     const router = useRouter();
     const [date, setDate] = useState(new Date());
     const { timefrom, timeto, slots } = props.schedule;
-    const title = props.schedule.title + ' 예약 현황';
+    const title =
+        props.schedule.title + getString(locale, strings.label.statue_title);
     return (
         <Container maxWidth="xs" sx={{ marginTop: 1 }}>
             <Box sx={{ display: 'flex' }}>
@@ -50,7 +69,7 @@ const DayScheduleStatusPage = (props: Props) => {
                         router.replace(props.routeback);
                     }}
                 >
-                    목록화면으로
+                    {getString(locale, strings.label.to_list)}
                 </LinkText>
             </Box>
 

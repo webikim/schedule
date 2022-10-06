@@ -15,6 +15,33 @@ import { connectMongo } from '../../../lib/mongo-helper';
 import NotificationContext from '../../../store/notification-context';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
+import { getString } from '../../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        update_failed: {
+            en: 'Failed to update schedule.',
+            kr: '예약작업을 수정할수 없습니다.',
+        },
+        update_success: {
+            en: 'Updated Schedule successful.',
+            kr: '예약작업이 수정되었습니다.',
+        },
+    },
+    label: {
+        to_list: {
+            en: 'to list',
+            kr: '목록화면으로',
+        },
+        update_title: {
+            en: 'Update Schedule',
+            kr: '예약 수정',
+        },
+    },
+};
+
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -54,7 +81,7 @@ const UpdateSchedulePage = (props: Props) => {
         });
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: '예약작업을 수정할수 없습니다.',
+                message: getString(locale, strings.message.update_failed),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -62,7 +89,7 @@ const UpdateSchedulePage = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: '예약작업이 수정되었습니다.',
+            message: getString(locale, strings.message.update_success),
             status: 'success',
         });
     };
@@ -77,11 +104,13 @@ const UpdateSchedulePage = (props: Props) => {
                             router.replace('/schedule/manage/');
                         }}
                     >
-                        목록화면으로
+                        {getString(locale, strings.label.to_list)}
                     </LinkText>
                 </Box>
                 <Box sx={{ marginTop: 4 }}>
-                    <CenteredText sx={{ fontSize: 20 }}>예약 수정</CenteredText>
+                    <CenteredText sx={{ fontSize: 20 }}>
+                        {getString(locale, strings.label.update_title)}
+                    </CenteredText>
                     <BuildScheduleForm
                         schedule={props.schedule}
                         onSubmit={handleSubmit}

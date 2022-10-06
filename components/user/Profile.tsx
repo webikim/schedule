@@ -12,6 +12,45 @@ import {
 import React, { useContext } from 'react';
 import NotificationContext from '../../store/notification-context';
 
+import { getString } from '../locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        update_failed: {
+            en: 'Could not update profile.',
+            kr: '내 정보를 수정할수 없습니다.',
+        },
+        update_success: {
+            en: 'Updated profile successfully.',
+            kr: '정보가 수정되었습니다.',
+        },
+    },
+    label: {
+        profile_title: {
+            en: 'Update Profile',
+            kr: '내 정보 수정',
+        },
+        fullname: {
+            en: 'Full name',
+            kr: '이름',
+        },
+        contact: {
+            en: 'Contact',
+            kr: '연락처',
+        },
+        bio: {
+            en: 'Biography',
+            kr: '특이사항',
+        },
+        update_button: {
+            en: 'Update Profile',
+            kr: '정보 수정하기',
+        },
+    },
+};
+
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     height: '100%',
@@ -67,7 +106,7 @@ const Profile = (props: Props) => {
         });
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: '내 정보를 수정할수 없습니다.',
+                message: getString(locale, strings.message.update_failed),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -75,14 +114,16 @@ const Profile = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: '내 정보를 수정했습니다.',
+            message: getString(locale, strings.message.update_success),
             status: 'success',
         });
     };
     return (
         <>
             <Container component="main" maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>내 정보 수정</CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>
+                    {getString(locale, strings.label.profile_title)}
+                </CenteredText>
                 <Box
                     sx={{
                         display: 'flex',
@@ -104,7 +145,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="fullname"
                         name="fullname"
-                        label="이름"
+                        label={getString(locale, strings.label.fullname)}
                         autoComplete="fullname"
                         autoFocus
                         defaultValue={props.fullname}
@@ -115,7 +156,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="contact"
                         name="contact"
-                        label="연락처"
+                        label={getString(locale, strings.label.contact)}
                         autoComplete="contact"
                         size="small"
                     />
@@ -124,7 +165,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="bio"
                         name="bio"
-                        label="특이사항"
+                        label={getString(locale, strings.label.bio)}
                         autoComplete="bio"
                         size="small"
                     />
@@ -134,7 +175,7 @@ const Profile = (props: Props) => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        정보 수정하기
+                        {getString(locale, strings.label.update_button)}
                     </Button>
                 </Box>
             </Container>
