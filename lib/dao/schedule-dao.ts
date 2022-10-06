@@ -13,6 +13,7 @@ export type Schedule = {
     timefrom: Date;
     timeto: Date;
     created: Date;
+    slots: string;
     offday: Date[];
     createdby: string;
 }
@@ -56,8 +57,9 @@ export const getSchedule = async (client: MongoClient, id: string) => {
             dateto: rawschedule.dateto || null,
             timefrom: rawschedule.timefrom,
             timeto: rawschedule.timeto,
-            offday: rawschedule.offday || null,
             created: rawschedule.created.toISOString(),
+            slots: rawschedule.slots,
+            offday: rawschedule.offday || null,
             createdby: rawschedule.createdby
         }
     }
@@ -76,6 +78,7 @@ export const updateSchedule = async (client: MongoClient, id: string, schedule: 
             dateto: schedule.dateto,
             timefrom: schedule.timefrom,
             timeto: schedule.timeto,
+            slots: schedule.slots,
             offday: schedule.offday
         }
     }, { upsert: false })

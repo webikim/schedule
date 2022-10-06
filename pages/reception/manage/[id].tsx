@@ -37,7 +37,7 @@ interface Props {
     schedule: Schedule;
 }
 
-const ManageSchedule = (props: Props) => {
+const UpdateSchedulePage = (props: Props) => {
     const router = useRouter();
     const { id } = router.query;
     const notificationCtx = useContext(NotificationContext);
@@ -117,4 +117,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default ManageSchedule;
+export default UpdateSchedulePage;

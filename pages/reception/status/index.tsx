@@ -1,12 +1,12 @@
-import { Container } from '@mui/material';
+import { Container, styled, Typography, TypographyProps } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import ScheduleStatus from '../../components/reception/ScheduleStatus';
-import { getScheduleList, Schedule } from '../../lib/dao/schedule-dao';
-import { connectMongo } from '../../lib/mongo-helper';
+import ScheduleList from '../../../components/reception/ScheduleList';
+import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
+import { connectMongo } from '../../../lib/mongo-helper';
 
 const scheduleConfig = {
     start: 7,
@@ -14,11 +14,19 @@ const scheduleConfig = {
     slotsPerHour: 2,
 };
 
+const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1em',
+}));
+
 interface Props {
     schedules: Schedule[];
 }
 
-const ReceptionSubPage = (props: Props) => {
+const ScheduleStatusPage = (props: Props) => {
     const router = useRouter();
     useEffect(() => {
         getSession().then((session) => {
@@ -35,7 +43,12 @@ const ReceptionSubPage = (props: Props) => {
             </Head>
 
             <Container sx={{ marginTop: 5 }}>
-                <ScheduleStatus {...scheduleConfig} date={new Date()} />
+                <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
+                    예약 현황
+                </CenteredText>
+                <ScheduleList schedules={props.schedules} />
+
+                {/* <ScheduleStatus {...scheduleConfig} date={new Date()} /> */}
             </Container>
         </>
     );
@@ -61,4 +74,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default ReceptionSubPage;
+export default ScheduleStatusPage;

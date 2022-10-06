@@ -1,7 +1,6 @@
 import React, { Children, useContext } from 'react';
 import MonthView from '../calendar/MonthView';
 import {
-    Box,
     Container,
     IconButton,
     ListItem,

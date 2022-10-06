@@ -10,7 +10,7 @@ interface Props {
     schedules: Schedule[];
 }
 
-const ReceptionSubPage = (props: Props) => {
+const CreateSchedulePage = (props: Props) => {
     const router = useRouter();
     useEffect(() => {
         getSession().then((session) => {
@@ -33,4 +33,4 @@ const ReceptionSubPage = (props: Props) => {
     );
 };
 
-export default ReceptionSubPage;
+export default CreateSchedulePage;

@@ -12,7 +12,7 @@ interface Props {
     schedules: Schedule[];
 }
 
-const ReceptionSubPage = (props: Props) => {
+const ManageSchedulePage = (props: Props) => {
     const [schedules, setSchedules] = useState(props.schedules);
     const router = useRouter();
     useEffect(() => {
@@ -56,4 +56,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default ReceptionSubPage;
+export default ManageSchedulePage;

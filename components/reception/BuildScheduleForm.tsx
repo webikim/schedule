@@ -2,6 +2,11 @@ import {
     Box,
     Button,
     Container,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Radio,
+    RadioGroup,
     styled,
     TextField,
     TextFieldProps,
@@ -77,6 +82,7 @@ const BuildScheduleForm = (props: Props) => {
                 timefrom: timefrom.toDate(),
                 timeto: timeto.toDate(),
                 createdby: data?.user?.email,
+                slots: formdata.get('slots'),
             })
         );
     };
@@ -167,6 +173,26 @@ const BuildScheduleForm = (props: Props) => {
                                 )}
                             />
                         </Box>
+                        <FormControl>
+                            <FormLabel id="slots-per-hour">시간간격</FormLabel>
+                            <RadioGroup
+                                row
+                                aria-labelledby="slots-per-hour"
+                                name="slots"
+                                defaultValue={schedule ? schedule.slots : '2'}
+                            >
+                                <FormControlLabel
+                                    value="1"
+                                    control={<Radio />}
+                                    label="1시간 간격"
+                                />
+                                <FormControlLabel
+                                    value="2"
+                                    control={<Radio />}
+                                    label="30분 간격"
+                                />
+                            </RadioGroup>
+                        </FormControl>
                         <Button
                             type="submit"
                             fullWidth
