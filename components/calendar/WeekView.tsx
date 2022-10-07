@@ -23,12 +23,7 @@ const strings = {
             kr: '* 예약할 시간을 선택하세요.',
         },
     },
-    label: {
-        reservation_title: {
-            en: 'Reserve a Seat',
-            kr: '예약하기',
-        },
-    },
+    label: {},
 };
 
 class WeekData {
@@ -154,6 +149,7 @@ interface Props {
     end: number;
     slotsPerHour: number;
     date: Date;
+    setDate: React.Dispatch<React.SetStateAction<Date>>;
 }
 
 const WeekView = (props: Props) => {
@@ -161,28 +157,21 @@ const WeekView = (props: Props) => {
     const weekData = getWeekData(date);
     return (
         <>
-            <Container maxWidth="xs">
-                <CenteredText
-                    sx={{ fontSize: 20, fontWeight: '700', marginBottom: 2 }}
-                >
-                    {getString(locale, strings.label.reservation_title)}
-                </CenteredText>
-                <Grid container sx={{ marginTop: 1, marginBottom: 1 }}>
-                    {renderWeekNavi(date, setDate)}
-                </Grid>
-                <Typography
-                    sx={{
-                        width: '100%',
-                        fontSize: 'small',
-                        backgroundColor: 'lightgray',
-                    }}
-                >
-                    {getString(locale, strings.message.select_time)}
-                </Typography>
-                <Grid container>{renderWeekHeader(weekData)}</Grid>
-                <Grid container>{renderSeperator(weekData)}</Grid>
-                <Grid container>{renderWeeklySchedule(props, weekData)}</Grid>
-            </Container>
+            <Grid container sx={{ marginTop: 1, marginBottom: 1 }}>
+                {renderWeekNavi(date, setDate)}
+            </Grid>
+            <Typography
+                sx={{
+                    width: '100%',
+                    fontSize: 'small',
+                    backgroundColor: 'lightgray',
+                }}
+            >
+                {getString(locale, strings.message.select_time)}
+            </Typography>
+            <Grid container>{renderWeekHeader(weekData)}</Grid>
+            <Grid container>{renderSeperator(weekData)}</Grid>
+            <Grid container>{renderWeeklySchedule(props, weekData)}</Grid>
         </>
     );
 };

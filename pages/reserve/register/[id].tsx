@@ -1,29 +1,29 @@
-import { Box, Container } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import DayScheduleStatus from '../../../components/schedule/DayScheduleStatus';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import WeekView from '../../../components/calendar/WeekView';
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { useRouter } from 'next/router';
+import { Box, Container } from '@mui/material';
+import { LinkText, TitleText } from '../../../components/theme/styles';
 
 import { getString } from '../../../components/locale/stringUtil';
-import { LinkText, TitleText } from '../../../components/theme/styles';
 
 const locale = 'en';
 
 const strings = {
     message: {},
     label: {
+        register_title: {
+            en: 'Reserve - ',
+            kr: '예약 하기 - ',
+        },
         to_list: {
             en: 'to list',
             kr: '목록화면으로',
-        },
-        statue_title: {
-            en: ' Schedule',
-            kr: ' 예약 현황',
         },
     },
 };
@@ -33,12 +33,12 @@ interface Props {
     routeback: string;
 }
 
-const DayScheduleStatusPage = (props: Props) => {
+const DayRegisterPage = (props: Props) => {
     const router = useRouter();
     const [date, setDate] = useState(new Date());
     const { timefrom, timeto, slots } = props.schedule;
     const title =
-        props.schedule.title + getString(locale, strings.label.statue_title);
+        getString(locale, strings.label.register_title) + props.schedule.title;
     return (
         <Container maxWidth="xs" sx={{ marginTop: 1 }}>
             <Box sx={{ display: 'flex' }}>
@@ -54,7 +54,7 @@ const DayScheduleStatusPage = (props: Props) => {
 
             <Box sx={{ marginTop: 4 }}>
                 <TitleText>{title}</TitleText>
-                <DayScheduleStatus
+                <WeekView
                     start={dayjs(timefrom).hour()}
                     end={dayjs(timeto).hour()}
                     slotsPerHour={parseInt(slots)}
@@ -71,7 +71,7 @@ export const getServerSideProps = async (
 ) => {
     const session = await getSession({ req: context.req });
     const { id, back } = context.query;
-    // console.log('... re-rendered...');
+
     if (session && id) {
         const client = await connectMongo();
         const schedule = await getSchedule(client, id as string);
@@ -88,4 +88,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default DayScheduleStatusPage;
+export default DayRegisterPage;

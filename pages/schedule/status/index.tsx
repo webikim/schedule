@@ -9,6 +9,7 @@ import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 
 import { getString } from '../../../components/locale/stringUtil';
+import { TitleText } from '../../../components/theme/styles';
 
 const locale = 'en';
 
@@ -21,19 +22,12 @@ const strings = {
         },
     },
 };
+
 const scheduleConfig = {
     start: 7,
     end: 22,
     slotsPerHour: 2,
 };
-
-const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
-    display: 'flex',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1em',
-}));
 
 interface Props {
     schedules: Schedule[];
@@ -48,7 +42,7 @@ const ScheduleStatusPage = (props: Props) => {
             }
         });
     });
-    const title = '예약만들기';
+    const title = getString(locale, strings.label.statue_title);
     return (
         <>
             <Head>
@@ -56,9 +50,9 @@ const ScheduleStatusPage = (props: Props) => {
             </Head>
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
-                <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
+                <TitleText>
                     {getString(locale, strings.label.statue_title)}
-                </CenteredText>
+                </TitleText>
                 <ScheduleList schedules={props.schedules} />
 
                 {/* <ScheduleStatus {...scheduleConfig} date={new Date()} /> */}

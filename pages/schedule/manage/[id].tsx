@@ -1,10 +1,4 @@
-import {
-    Box,
-    Container,
-    styled,
-    Typography,
-    TypographyProps,
-} from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -16,6 +10,7 @@ import NotificationContext from '../../../store/notification-context';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { getString } from '../../../components/locale/stringUtil';
+import { LinkText, TitleText } from '../../../components/theme/styles';
 
 const locale = 'en';
 
@@ -41,24 +36,6 @@ const strings = {
         },
     },
 };
-
-const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
-    display: 'flex',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1em',
-    fontWeight: '700',
-}));
-
-const LinkText = styled(Typography)<TypographyProps>(({ theme }) => ({
-    '&:hover': {
-        cursor: 'pointer',
-        textDecoration: 'underline',
-        textDecorationColor: 'gray',
-        fontWeight: 700,
-    },
-}));
 
 interface Props {
     schedule: Schedule;
@@ -108,9 +85,9 @@ const UpdateSchedulePage = (props: Props) => {
                     </LinkText>
                 </Box>
                 <Box sx={{ marginTop: 4 }}>
-                    <CenteredText sx={{ fontSize: 20 }}>
+                    <TitleText>
                         {getString(locale, strings.label.update_title)}
-                    </CenteredText>
+                    </TitleText>
                     <BuildScheduleForm
                         schedule={props.schedule}
                         onSubmit={handleSubmit}

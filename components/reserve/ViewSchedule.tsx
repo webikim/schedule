@@ -174,14 +174,9 @@ const ViewSchedule = (props: Props) => {
     //
     return (
         <>
-            <Container maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
-                    <>{user} 님의 예약</>
-                </CenteredText>
-                {renderHeader(date, setDate, view, setView)}
-                {view === DAY_VIEW && renderDaySchedule(hourData)}
-                {view === MONTH_VIEW && renderMonthSchedule(date, setDate)}
-            </Container>
+            {renderHeader(date, setDate, view, setView)}
+            {view === DAY_VIEW && renderDaySchedule(hourData)}
+            {view === MONTH_VIEW && renderMonthSchedule(date, setDate)}
         </>
     );
 };

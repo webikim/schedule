@@ -8,6 +8,21 @@ import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 import SearchSchedule from '../../../components/reserve/SearchSchedule';
 import RegisterSchedule from '../../../components/reserve/RegisterSchedule';
+import { TitleText } from '../../../components/theme/styles';
+
+import { getString } from '../../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        reserve_title: {
+            en: 'Reserve Seat',
+            kr: '예약 하기',
+        },
+    },
+};
 
 export type ScheduleShort = {
     id: string;
@@ -17,10 +32,10 @@ export type ScheduleShort = {
 };
 
 interface Props {
-    schedules: ScheduleShort;
+    schedules: ScheduleShort[];
 }
 
-const ScheduleSubPage = (props: Props) => {
+const ReserveRegisterPage = (props: Props) => {
     const router = useRouter();
     useEffect(() => {
         getSession().then((session) => {
@@ -30,16 +45,19 @@ const ScheduleSubPage = (props: Props) => {
         });
     });
 
-    const title = '예약하기';
+    const title = getString(locale, strings.label.reserve_title);
     return (
         <>
             <Head>
                 <title>{title}</title>
             </Head>
 
-            <Container sx={{ marginTop: 5 }}>
-                {/* <SearchSchedule schedules={props.schedules}/> */}
-                <RegisterSchedule />
+            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
+                <TitleText sx={{ fontSize: 20 }}>
+                    {getString(locale, strings.label.reserve_title)}
+                </TitleText>
+                <SearchSchedule schedules={props.schedules} />
+                {/* <RegisterSchedule /> */}
             </Container>
         </>
     );
@@ -66,4 +84,4 @@ export const getServerSideProps = async (
     };
 };
 
-export default ScheduleSubPage;
+export default ReserveRegisterPage;

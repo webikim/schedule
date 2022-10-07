@@ -32,12 +32,7 @@ const strings = {
             kr: '예약작업이 삭제되었습니다.',
         },
     },
-    label: {
-        manage_title: {
-            en: 'Manage Schedules',
-            kr: '예약 관리',
-        },
-    },
+    label: {},
 };
 
 const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -133,22 +128,17 @@ const ManageSchedule = (props: Props) => {
 
     return (
         <>
-            <Container maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>
-                    {getString(locale, strings.label.manage_title)}
-                </CenteredText>
-                {renderScheduleList(
-                    props.schedules,
-                    props.update,
-                    router,
-                    notificationCtx
-                )}
-                {/* <MonthView
+            {renderScheduleList(
+                props.schedules,
+                props.update,
+                router,
+                notificationCtx
+            )}
+            {/* <MonthView
                     date={date}
                     setdate={setDate}
                     hint="* 예약내용을 변경할 날짜를 선택하세요."
                 /> */}
-            </Container>
         </>
     );
 };

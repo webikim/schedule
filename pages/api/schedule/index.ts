@@ -18,7 +18,7 @@ const handler = async (req: ScheduleApiRequest, res: NextApiResponse) => {
             console.log('body = ', req.body)
             const { title, contact, datefrom, timefrom, timeto } = req.body;
             if (!title || !contact || !datefrom || !timefrom || !timeto) {
-                res.status(400).json({ message: 'Invalid data' });
+                res.status(422).json({ message: 'Invalid data' });
                 return;
             }
 
@@ -27,6 +27,7 @@ const handler = async (req: ScheduleApiRequest, res: NextApiResponse) => {
 
             if (result.acknowledged) {
                 res.status(201).json({ message: 'successfully created schedule.', data: { ...req.body, _id: result.insertedId.toString() } });
+                return;
             }
             res.status(400).json({ message: 'failed to create schedule.' })
     }

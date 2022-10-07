@@ -5,8 +5,23 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import ManageSchedule from '../../../components/schedule/ManageSchedule';
+import { TitleText } from '../../../components/theme/styles';
 import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
+
+import { getString } from '../../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {},
+    label: {
+        manage_title: {
+            en: 'Manage Schedules',
+            kr: '예약 관리',
+        },
+    },
+};
 
 interface Props {
     schedules: Schedule[];
@@ -22,14 +37,17 @@ const ManageSchedulePage = (props: Props) => {
             }
         });
     });
-    const title = '예약만들기';
+    const title = getString(locale, strings.label.manage_title);
     return (
         <>
             <Head>
                 <title>{title}</title>
             </Head>
 
-            <Container sx={{ marginTop: 5 }}>
+            <Container maxWidth="xs" sx={{ marginTop: 5 }}>
+                <TitleText sx={{ fontSize: 20 }}>
+                    {getString(locale, strings.label.manage_title)}
+                </TitleText>
                 <ManageSchedule schedules={schedules} update={setSchedules} />
             </Container>
         </>
