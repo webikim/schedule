@@ -11,6 +11,8 @@ import { TitleText } from '../../../components/theme/styles';
 
 import { getString } from '../../../components/locale/stringUtil';
 import { ScheduleShort } from '../../reserve/register';
+import dayjs from 'dayjs';
+import { filetrPathName } from '../../../components/menu/menuUtil';
 
 const locale = 'en';
 
@@ -53,13 +55,19 @@ const ScheduleStatusPage = (props: Props) => {
     const handleClickSchedule =
         (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            console.log('item clicked');
             router.replace(
                 '/schedule/status/' +
                     schedules[index].id +
+                    '/' +
+                    // new Date().toISOString() +
+                    dayjs().format('YYYY-MM-DD') +
                     '?back=/schedule/status'
             );
         };
+
+    const handleNavi = (date: Date) => {
+        console.log(filetrPathName(router.pathname));
+    };
 
     const title = getString(locale, strings.label.statue_title);
     return (

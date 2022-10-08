@@ -13,10 +13,12 @@ import { LinkText, TitleText } from '../../../components/theme/styles';
 import { getString } from '../../../components/locale/stringUtil';
 import NotificationContext from '../../../store/notification-context';
 import {
+    convertReserve2Dto,
     getWeekReserve,
     Reserve,
     ReserveDtoType,
 } from '../../../lib/dao/reserve-dao';
+import { filetrPathName } from '../../../components/menu/menuUtil';
 
 const locale = 'en';
 
@@ -43,19 +45,11 @@ const strings = {
     },
 };
 
-const convertReserve2Dto = (reserved: Reserve[]) => {
-    return reserved.map((each) => {
-        return {
-            email: each.email,
-            date: new Date(each.ymd + ':' + each.hm),
-        };
-    });
-};
-
 interface Props {
     schedule: Schedule;
     reserved: Reserve[];
     routeback: string;
+    date: string;
 }
 
 const DayRegisterPage = (props: Props) => {
@@ -65,8 +59,6 @@ const DayRegisterPage = (props: Props) => {
     const notificationCtx = useContext(NotificationContext);
     const session = useSession();
     const router = useRouter();
-    // const [date, setDate] = useState(new Date());
-    convertReserve2Dto(props.reserved);
     const { timefrom, timeto, slots } = props.schedule;
     const title =
         getString(locale, strings.label.register_title) + props.schedule.title;
@@ -102,6 +94,19 @@ const DayRegisterPage = (props: Props) => {
         });
         addToReserved(session.data!.user!.email!, date);
     };
+
+    const handleNavi = (date: Date) => {
+        router.replace(
+            filetrPathName(router.pathname) +
+                '/' +
+                props.schedule.id +
+                '/' +
+                dayjs(date).format('YYYY-MM-DD') +
+                '?back=' +
+                props.routeback
+        );
+    };
+
     return (
         <Container maxWidth="xs" sx={{ marginTop: 1 }}>
             <Box sx={{ display: 'flex' }}>
@@ -121,10 +126,10 @@ const DayRegisterPage = (props: Props) => {
                     start={dayjs(timefrom).hour()}
                     end={dayjs(timeto).hour()}
                     slotsPerHour={parseInt(slots)}
-                    date={new Date()}
-                    // setDate={setDate}
-                    onClick={handleClickTime}
+                    date={dayjs(props.date).toDate()}
                     reserved={reserved}
+                    onClick={handleClickTime}
+                    onClickNavi={handleNavi}
                 />
             </Box>
         </Container>
@@ -137,7 +142,6 @@ export const getServerSideProps = async (
     const session = await getSession({ req: context.req });
     const { arg, back } = context.query;
     const [id, date] = arg as string[];
-
     if (session && id) {
         const client = await connectMongo();
         const schedule = await getSchedule(client, id as string);
@@ -149,6 +153,7 @@ export const getServerSideProps = async (
                 schedule: schedule,
                 reserved: reserved,
                 routeback: back || '',
+                date: date,
             },
         };
     }

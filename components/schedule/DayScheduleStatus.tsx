@@ -1,24 +1,14 @@
-import {
-    Box,
-    BoxProps,
-    Grid,
-    IconButton,
-    styled,
-    Typography,
-} from '@mui/material';
-import React, { Children, useState } from 'react';
+import { Box, BoxProps, styled, Typography } from '@mui/material';
+import React, { Children } from 'react';
 import dayjs from 'dayjs';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import {
-    AMPM_FIRST,
-    getHours,
-    HourInDay,
-    renderHourNslot,
-    setSlots,
-} from '../calendar/Hours';
+import { getHours, HourInDay, setSlots } from '../calendar/Hours';
 
 import { getString } from '../locale/stringUtil';
+import { useRouter } from 'next/router';
+import DateNavigator from '../calendar/DateNavigator';
+import { CenteredText } from '../theme/styles';
+import HoursReserved from '../calendar/HourReserved';
+import { ReserveDtoType } from '../../lib/dao/reserve-dao';
 
 const locale = 'en';
 
@@ -41,46 +31,8 @@ const Filler = styled(Box)<FillerProps>(({ theme, index }) => ({
     borderTop: index === 0 ? 'lightgray 1px solid' : undefined,
 }));
 
-const renderHeader = (
-    date: Date,
-    setDate: React.Dispatch<React.SetStateAction<Date>>
-) => {
-    const handleClickPrev = () => {
-        const prev = new Date(date);
-        prev.setDate(prev.getDate() - 1);
-        setDate(prev);
-    };
-    const handleClickNext = () => {
-        const next = new Date(date);
-        next.setDate(next.getDate() + 1);
-        setDate(next);
-    };
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <IconButton onClick={handleClickPrev}>
-                <ArrowBackIosNewIcon />
-            </IconButton>
-            <Typography
-                sx={{
-                    display: 'flex',
-                    flexGrow: 1,
-                    justifyContent: 'center',
-                    fontWeight: '700',
-                    margin: 'auto 0',
-                }}
-            >
-                {dayjs(date).format('YYYY.M.D')}
-            </Typography>
-            <IconButton onClick={handleClickNext}>
-                <ArrowForwardIosIcon />
-            </IconButton>
-        </Box>
-    );
-};
-
 const renderSchedule = (data: HourInDay, isFirst: boolean) => {
     let slots: JSX.Element[] = [];
-    const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
     data.slots.map((each, index) => {
         slots.push(
             <>
@@ -112,18 +64,33 @@ interface Props {
     end: number;
     slotsPerHour: number;
     date: Date;
-    setDate: React.Dispatch<React.SetStateAction<Date>>;
+    reserved: ReserveDtoType[];
+    onClick: () => void;
+    onClickNavi: (date: Date) => void;
 }
 
 const DayScheduleStatus = (props: Props) => {
-    const hourData = getHours(props.start, props.end, props.slotsPerHour);
-    setSlots(hourData, props.slotsPerHour);
+    const { start, end, slotsPerHour, date, onClick } = props;
+    const router = useRouter();
+    const hourData = getHours(start, end, slotsPerHour);
+    setSlots(hourData, slotsPerHour);
 
-    const handleClickSlot = (hour: number, min: number) => () => {};
+    const handleClickSlot = () => {
+        onClick();
+    };
 
     return (
         <>
-            {renderHeader(props.date, props.setDate)}
+            <DateNavigator
+                date={date}
+                incdec={1}
+                onPrev={props.onClickNavi}
+                onNext={props.onClickNavi}
+            >
+                <CenteredText sx={{ fontWeight: '700', color: 'gray' }}>
+                    {dayjs(date).format('YYYY.M.D')}
+                </CenteredText>
+            </DateNavigator>
             <Box>
                 <Typography
                     sx={{
@@ -136,21 +103,13 @@ const DayScheduleStatus = (props: Props) => {
                     {getString(locale, strings.message.select_to_update)}
                 </Typography>
             </Box>
-            <Grid container>
-                <Grid item xs={1.5}>
-                    {/* {renderStatusHour(hourData)} */}
-                    {renderHourNslot(
-                        hourData,
-                        false,
-                        true,
-                        AMPM_FIRST,
-                        handleClickSlot
-                    )}
-                </Grid>
-                <Grid item xs={10.5}>
-                    {renderStatus(hourData)}
-                </Grid>
-            </Grid>
+            <HoursReserved
+                start={start}
+                end={end}
+                slotsPerHour={slotsPerHour}
+                reserved={props.reserved}
+                onClick={handleClickSlot}
+            ></HoursReserved>
         </>
     );
 };

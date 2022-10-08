@@ -16,6 +16,7 @@ import NotificationContext, {
     NotificationContextInterface,
 } from '../../store/notification-context';
 import { NextRouter, useRouter } from 'next/router';
+import dayjs from 'dayjs';
 
 import { getString } from '../locale/stringUtil';
 
@@ -64,7 +65,12 @@ const renderScheduleList = (
             event.preventDefault();
             console.log('item clicked');
             router.replace(
-                '/schedule/status/' + data[index].id + '?back=/schedule/manage/'
+                '/schedule/status/' +
+                    data[index].id +
+                    '/' +
+                    // new Date().toISOString() +
+                    dayjs().format('YYYY-MM-DD') +
+                    '?back=/schedule/manage/'
             );
         };
     const handleClickEdit =

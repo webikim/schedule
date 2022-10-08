@@ -1,6 +1,6 @@
 import { menus } from '../../data/menus';
 
-const filetrPathName = (pathName: string) => {
+export const filetrPathName = (pathName: string) => {
     if (pathName) {
         if (pathName.charAt(pathName.length - 1) === ']') {
             return pathName.slice(0, pathName.lastIndexOf('/'));

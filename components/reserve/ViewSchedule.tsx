@@ -19,7 +19,6 @@ import {
     getAMPM,
     getHours,
     HourInDay,
-    renderHourNslot,
     setSlots,
 } from '../calendar/Hours';
 import MonthView from '../calendar/MonthView';
@@ -139,13 +138,13 @@ const renderDaySchedule = (hourData: HourInDay[]) => {
         <>
             <Grid container>
                 <Grid item xs={1.5}>
-                    {renderHourNslot(
+                    {/* {renderHourNslot(
                         hourData,
                         false,
                         false,
                         AMPM_ALWAYS,
                         handleClick
-                    )}
+                    )} */}
                 </Grid>
             </Grid>
         </>

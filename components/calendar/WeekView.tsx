@@ -5,14 +5,13 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
-import { Children, Dispatch, SetStateAction, useState } from 'react';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Children } from 'react';
 import dayjs from 'dayjs';
 import Hours from './Hours';
+import { ReserveDtoType } from '../../lib/dao/reserve-dao';
+import DateNavigator from './DateNavigator';
 
 import { getString } from '../locale/stringUtil';
-import { ReserveDtoType } from '../../lib/dao/reserve-dao';
 import { CenteredText } from '../theme/styles';
 
 const locale = 'en';
@@ -59,17 +58,6 @@ const HCenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-const Navigation = styled(Grid)<GridProps>(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    color: 'lightgray',
-    '&:hover': {
-        cursor: 'pointer',
-        fontWeight: 700,
-        color: 'black',
-    },
-}));
-
 const getWeekData = (date: Date) => {
     const refDate = new Date(date);
     // refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
@@ -81,37 +69,6 @@ const getWeekData = (date: Date) => {
         return new WeekData(refDate.getDay(), new Date(refDate));
     });
     return weekData;
-};
-
-const renderWeekNavi = (
-    date: Date,
-    setDate: Dispatch<SetStateAction<Date>>
-) => {
-    const handleClickPrev = () => {
-        const prev = new Date(date);
-        // prev.setDate(prev.getDate() - prev.getDay() - 7);
-        prev.setDate(prev.getDate() - 7);
-        setDate(prev);
-    };
-    const handleClickNext = () => {
-        const next = new Date(date);
-        // next.setDate(next.getDate() - next.getDay() + 7);
-        next.setDate(next.getDate() + 7);
-        setDate(next);
-    };
-    return (
-        <>
-            <Navigation item xs={1} onClick={handleClickPrev}>
-                <ArrowBackIosIcon />
-            </Navigation>
-            <Navigation item xs={1} onClick={handleClickNext}>
-                <ArrowForwardIosIcon />
-            </Navigation>
-            <CenteredText sx={{ fontWeight: '700', color: 'gray' }}>
-                {date.getFullYear() + '. ' + (date.getMonth() + 1)}
-            </CenteredText>
-        </>
-    );
 };
 
 const renderWeekHeader = (weekData: WeekData[]) => {
@@ -151,25 +108,25 @@ const renderSeperator = (weekData: WeekData[]) => {
 //     return <> {Children.toArray(schedules)} </>;
 // };
 
+const selectWithDate = (reserved: ReserveDtoType[], date: Date) => {
+    return reserved.filter((each) => {
+        return each.date.getDate() === date.getDate();
+    });
+};
+
 interface Props {
     start: number;
     end: number;
     slotsPerHour: number;
     date: Date;
     reserved: ReserveDtoType[];
-    // setDate: React.Dispatch<React.SetStateAction<Date>>;
     onClick: (date: Date) => void;
+    onClickNavi: (date: Date) => void;
 }
 
-const selectWithDate = (reserved: ReserveDtoType[], date: Date) => {
-    return reserved.map((each) => {
-        if (each.date.getDate() === date.getDate()) return each;
-    });
-};
-
 const WeekView = (props: Props) => {
-    const { start, end, slotsPerHour, onClick } = props;
-    const [date, setDate] = useState(props.date);
+    const { start, end, slotsPerHour, date, onClick } = props;
+    // const [date, setDate] = useState(props.date);
     const weekData = getWeekData(date);
 
     const handleClickSlot = (data: WeekData) => (hour: number, min: number) => {
@@ -184,7 +141,6 @@ const WeekView = (props: Props) => {
                     start={start}
                     end={end}
                     slotsPerHour={slotsPerHour}
-                    date={date}
                     reserved={
                         selectWithDate(
                             props.reserved,
@@ -198,9 +154,16 @@ const WeekView = (props: Props) => {
     });
     return (
         <>
-            <Grid container sx={{ marginTop: 1, marginBottom: 1 }}>
-                {renderWeekNavi(date, setDate)}
-            </Grid>
+            <DateNavigator
+                date={date}
+                incdec={7}
+                onPrev={props.onClickNavi}
+                onNext={props.onClickNavi}
+            >
+                <CenteredText sx={{ fontWeight: '700', color: 'gray' }}>
+                    {date.getFullYear() + '. ' + (date.getMonth() + 1)}
+                </CenteredText>
+            </DateNavigator>
             <Typography
                 sx={{
                     width: '100%',

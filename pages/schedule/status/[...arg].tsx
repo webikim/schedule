@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React from 'react';
 import dayjs from 'dayjs';
 import DayScheduleStatus from '../../../components/schedule/DayScheduleStatus';
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
@@ -12,6 +12,13 @@ import { useRouter } from 'next/router';
 import { getString } from '../../../components/locale/stringUtil';
 import { LinkText, TitleText } from '../../../components/theme/styles';
 import Head from 'next/head';
+import {
+    convertReserve2Dto,
+    getReserve,
+    Reserve,
+    ReserveDtoType,
+} from '../../../lib/dao/reserve-dao';
+import { filetrPathName } from '../../../components/menu/menuUtil';
 
 const locale = 'en';
 
@@ -31,15 +38,32 @@ const strings = {
 
 interface Props {
     schedule: Schedule;
+    reserved: Reserve[];
+    date: string;
     routeback: string;
 }
 
 const DayScheduleStatusPage = (props: Props) => {
     const router = useRouter();
-    const [date, setDate] = useState(new Date());
     const { timefrom, timeto, slots } = props.schedule;
+
     const title =
         props.schedule.title + getString(locale, strings.label.statue_title);
+
+    const handleNavi = (date: Date) => {
+        router.replace(
+            filetrPathName(router.pathname) +
+                '/' +
+                props.schedule.id +
+                '/' +
+                dayjs(date).format('YYYY-MM-DD') +
+                '?back=' +
+                props.routeback
+        );
+    };
+
+    const handleClickSchedule = () => {};
+
     return (
         <>
             <Head>
@@ -64,8 +88,10 @@ const DayScheduleStatusPage = (props: Props) => {
                         start={dayjs(timefrom).hour()}
                         end={dayjs(timeto).hour()}
                         slotsPerHour={parseInt(slots)}
-                        date={date}
-                        setDate={setDate}
+                        date={dayjs(props.date).toDate()}
+                        reserved={convertReserve2Dto(props.reserved)}
+                        onClickNavi={handleNavi}
+                        onClick={handleClickSchedule}
                     />
                 </Box>
             </Container>
@@ -77,15 +103,19 @@ export const getServerSideProps = async (
     context: GetServerSidePropsContext
 ) => {
     const session = await getSession({ req: context.req });
-    const { id, back } = context.query;
+    const { arg, back } = context.query;
+    const [id, date] = arg as string[];
     // console.log('... re-rendered...');
     if (session && id) {
         const client = await connectMongo();
         const schedule = await getSchedule(client, id as string);
+        const reserved = await getReserve(client, id as string, date);
         await client.close();
         return {
             props: {
                 schedule: schedule,
+                reserved: reserved,
+                date: date,
                 routeback: back || '',
             },
         };
