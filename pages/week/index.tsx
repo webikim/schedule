@@ -25,7 +25,7 @@ function Week(props: WeekProps) {
             </Head>
 
             <Container sx={{ marginTop: 5 }}>
-                <WeekView {...scheduleConfig} date={new Date()}></WeekView>
+                {/* <WeekView {...scheduleConfig} date={new Date()}></WeekView> */}
             </Container>
         </>
     );
