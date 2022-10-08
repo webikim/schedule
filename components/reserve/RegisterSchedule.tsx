@@ -11,9 +11,7 @@ const scheduleConfig = {
 
 const RegisterSchedule = (props: Props) => {
     return (
-        <>
-            <WeekView {...scheduleConfig} date={new Date()}></WeekView>
-        </>
+        <>{/* <WeekView {...scheduleConfig} date={new Date()}></WeekView> */}</>
     );
 };
 

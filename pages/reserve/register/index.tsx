@@ -7,7 +7,6 @@ import React, { useEffect } from 'react';
 import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 import SearchSchedule from '../../../components/reserve/SearchSchedule';
-import RegisterSchedule from '../../../components/reserve/RegisterSchedule';
 import { TitleText } from '../../../components/theme/styles';
 
 import { getString } from '../../../components/locale/stringUtil';
