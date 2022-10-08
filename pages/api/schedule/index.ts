@@ -24,12 +24,13 @@ const handler = async (req: ScheduleApiRequest, res: NextApiResponse) => {
 
             const client = await connectMongo();
             const result = await putSchedule(client, req.body);
+            await client.close();
 
-            if (result.acknowledged) {
+            if (result.insertedId) {
                 res.status(201).json({ message: 'successfully created schedule.', data: { ...req.body, _id: result.insertedId.toString() } });
                 return;
             }
-            res.status(400).json({ message: 'failed to create schedule.' })
+            res.status(400).json({ message: 'failed to create schedule.' });
     }
 }
 

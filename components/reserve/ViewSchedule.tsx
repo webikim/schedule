@@ -132,12 +132,20 @@ const renderHeader = (
     );
 };
 
+const handleClick = (hour: number, min: number) => () => {};
+
 const renderDaySchedule = (hourData: HourInDay[]) => {
     return (
         <>
             <Grid container>
                 <Grid item xs={1.5}>
-                    {renderHourNslot(hourData, false, false, AMPM_ALWAYS)}
+                    {renderHourNslot(
+                        hourData,
+                        false,
+                        false,
+                        AMPM_ALWAYS,
+                        handleClick
+                    )}
                 </Grid>
             </Grid>
         </>

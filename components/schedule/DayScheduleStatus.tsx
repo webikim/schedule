@@ -119,6 +119,8 @@ const DayScheduleStatus = (props: Props) => {
     const hourData = getHours(props.start, props.end, props.slotsPerHour);
     setSlots(hourData, props.slotsPerHour);
 
+    const handleClickSlot = (hour: number, min: number) => () => {};
+
     return (
         <>
             {renderHeader(props.date, props.setDate)}
@@ -137,7 +139,13 @@ const DayScheduleStatus = (props: Props) => {
             <Grid container>
                 <Grid item xs={1.5}>
                     {/* {renderStatusHour(hourData)} */}
-                    {renderHourNslot(hourData, false, true, AMPM_FIRST)}
+                    {renderHourNslot(
+                        hourData,
+                        false,
+                        true,
+                        AMPM_FIRST,
+                        handleClickSlot
+                    )}
                 </Grid>
                 <Grid item xs={10.5}>
                     {renderStatus(hourData)}

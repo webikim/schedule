@@ -1,5 +1,4 @@
 import {
-    Box,
     Grid,
     GridProps,
     styled,
@@ -7,12 +6,14 @@ import {
     TypographyProps,
 } from '@mui/material';
 import { Children, Dispatch, SetStateAction, useState } from 'react';
-import Hours, { getHours } from './Hours';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Container } from '@mui/system';
+import dayjs from 'dayjs';
+import Hours from './Hours';
 
 import { getString } from '../locale/stringUtil';
+import { ReserveDtoType } from '../../lib/dao/reserve-dao';
+import { CenteredText } from '../theme/styles';
 
 const locale = 'en';
 
@@ -53,7 +54,7 @@ const Separator = styled(Grid)<GridProps>(({ theme }) => ({
     height: '0.5em',
 }));
 
-const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
+const HCenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
 }));
@@ -71,11 +72,13 @@ const Navigation = styled(Grid)<GridProps>(({ theme }) => ({
 
 const getWeekData = (date: Date) => {
     const refDate = new Date(date);
-    refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
+    // refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
+    refDate.setDate(refDate.getDate() - 1);
 
     const weekData = WeekString[locale].map((each, index: number) => {
         refDate.setDate(refDate.getDate() + 1);
-        return new WeekData(index, new Date(refDate));
+        // return new WeekData(index, new Date(refDate));
+        return new WeekData(refDate.getDay(), new Date(refDate));
     });
     return weekData;
 };
@@ -86,12 +89,14 @@ const renderWeekNavi = (
 ) => {
     const handleClickPrev = () => {
         const prev = new Date(date);
-        prev.setDate(prev.getDate() - prev.getDay() - 7);
+        // prev.setDate(prev.getDate() - prev.getDay() - 7);
+        prev.setDate(prev.getDate() - 7);
         setDate(prev);
     };
     const handleClickNext = () => {
         const next = new Date(date);
-        next.setDate(next.getDate() - next.getDay() + 7);
+        // next.setDate(next.getDate() - next.getDay() + 7);
+        next.setDate(next.getDate() + 7);
         setDate(next);
     };
     return (
@@ -115,8 +120,10 @@ const renderWeekHeader = (weekData: WeekData[]) => {
         weekHeader.push(
             <Grid item xs={1.7}>
                 <WeekName sx={{ paddingTop: '0.5em' }}>
-                    <CenteredText>{WeekString[locale][each.day]}</CenteredText>
-                    <CenteredText>{each.date.getDate()}</CenteredText>
+                    <HCenteredText>
+                        {WeekString[locale][each.day]}
+                    </HCenteredText>
+                    <HCenteredText>{each.date.getDate()}</HCenteredText>
                 </WeekName>
             </Grid>
         );
@@ -132,29 +139,63 @@ const renderSeperator = (weekData: WeekData[]) => {
     return <> {Children.toArray(weekHeader)} </>;
 };
 
-const renderWeeklySchedule = (props: Props, weekData: WeekData[]) => {
-    const schedules: JSX.Element[] = [];
-    weekData.map((each) => {
-        schedules.push(
-            <Grid item xs={1.7}>
-                <Hours {...props}></Hours>
-            </Grid>
-        );
-    });
-    return <> {Children.toArray(schedules)} </>;
-};
+// const renderWeeklySchedule = (props: Props, weekData: WeekData[]) => {
+//     const schedules: JSX.Element[] = [];
+//     weekData.map((each) => {
+//         schedules.push(
+//             <Grid item xs={1.7}>
+//                 <Hours {...props}></Hours>
+//             </Grid>
+//         );
+//     });
+//     return <> {Children.toArray(schedules)} </>;
+// };
 
 interface Props {
     start: number;
     end: number;
     slotsPerHour: number;
     date: Date;
-    setDate: React.Dispatch<React.SetStateAction<Date>>;
+    reserved: ReserveDtoType[];
+    // setDate: React.Dispatch<React.SetStateAction<Date>>;
+    onClick: (date: Date) => void;
 }
 
+const selectWithDate = (reserved: ReserveDtoType[], date: Date) => {
+    return reserved.map((each) => {
+        if (each.date.getDate() === date.getDate()) return each;
+    });
+};
+
 const WeekView = (props: Props) => {
+    const { start, end, slotsPerHour, onClick } = props;
     const [date, setDate] = useState(props.date);
     const weekData = getWeekData(date);
+
+    const handleClickSlot = (data: WeekData) => (hour: number, min: number) => {
+        onClick(dayjs(data.date).hour(hour).minute(min).second(0).toDate());
+    };
+
+    const schedules: JSX.Element[] = [];
+    weekData.map((each) => {
+        schedules.push(
+            <Grid item xs={1.7}>
+                <Hours
+                    start={start}
+                    end={end}
+                    slotsPerHour={slotsPerHour}
+                    date={date}
+                    reserved={
+                        selectWithDate(
+                            props.reserved,
+                            each.date
+                        ) as ReserveDtoType[]
+                    }
+                    onClick={handleClickSlot(each)}
+                ></Hours>
+            </Grid>
+        );
+    });
     return (
         <>
             <Grid container sx={{ marginTop: 1, marginBottom: 1 }}>
@@ -171,7 +212,8 @@ const WeekView = (props: Props) => {
             </Typography>
             <Grid container>{renderWeekHeader(weekData)}</Grid>
             <Grid container>{renderSeperator(weekData)}</Grid>
-            <Grid container>{renderWeeklySchedule(props, weekData)}</Grid>
+            <Grid container>{Children.toArray(schedules)}</Grid>
+            {/* <Grid container>{renderWeeklySchedule(props, weekData)}</Grid> */}
         </>
     );
 };

@@ -11,6 +11,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { getString } from '../../../components/locale/stringUtil';
 import { LinkText, TitleText } from '../../../components/theme/styles';
+import Head from 'next/head';
 
 const locale = 'en';
 
@@ -73,6 +74,10 @@ const UpdateSchedulePage = (props: Props) => {
 
     return (
         <>
+            <Head>
+                <title>{getString(locale, strings.label.update_title)}</title>
+            </Head>
+
             <Container maxWidth="xs" sx={{ marginTop: 1 }}>
                 <Box sx={{ display: 'flex' }}>
                     <ChevronLeftIcon />

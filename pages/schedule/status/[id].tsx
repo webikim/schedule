@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 
 import { getString } from '../../../components/locale/stringUtil';
 import { LinkText, TitleText } from '../../../components/theme/styles';
+import Head from 'next/head';
 
 const locale = 'en';
 
@@ -40,29 +41,35 @@ const DayScheduleStatusPage = (props: Props) => {
     const title =
         props.schedule.title + getString(locale, strings.label.statue_title);
     return (
-        <Container maxWidth="xs" sx={{ marginTop: 1 }}>
-            <Box sx={{ display: 'flex' }}>
-                <ChevronLeftIcon />
-                <LinkText
-                    onClick={() => {
-                        router.replace(props.routeback);
-                    }}
-                >
-                    {getString(locale, strings.label.to_list)}
-                </LinkText>
-            </Box>
+        <>
+            <Head>
+                <title>{title}</title>
+            </Head>
 
-            <Box sx={{ marginTop: 4 }}>
-                <TitleText>{title}</TitleText>
-                <DayScheduleStatus
-                    start={dayjs(timefrom).hour()}
-                    end={dayjs(timeto).hour()}
-                    slotsPerHour={parseInt(slots)}
-                    date={date}
-                    setDate={setDate}
-                />
-            </Box>
-        </Container>
+            <Container maxWidth="xs" sx={{ marginTop: 1 }}>
+                <Box sx={{ display: 'flex' }}>
+                    <ChevronLeftIcon />
+                    <LinkText
+                        onClick={() => {
+                            router.replace(props.routeback);
+                        }}
+                    >
+                        {getString(locale, strings.label.to_list)}
+                    </LinkText>
+                </Box>
+
+                <Box sx={{ marginTop: 4 }}>
+                    <TitleText>{title}</TitleText>
+                    <DayScheduleStatus
+                        start={dayjs(timefrom).hour()}
+                        end={dayjs(timeto).hour()}
+                        slotsPerHour={parseInt(slots)}
+                        date={date}
+                        setDate={setDate}
+                    />
+                </Box>
+            </Container>
+        </>
     );
 };
 

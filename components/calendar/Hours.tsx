@@ -7,6 +7,8 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
+import { CenteredText } from '../theme/styles';
+import { ReserveDtoType } from '../../lib/dao/reserve-dao';
 
 export class HourInDay {
     hour: number;
@@ -27,13 +29,6 @@ const HourTitle = styled(Grid)<GridProps>(({ theme }) => ({
     color: theme.palette.primary.contrastText,
     borderBottom: '1px solid gray',
     height: '2em',
-}));
-
-const CenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
-    display: 'flex',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
 }));
 
 interface SlotTextProps extends TypographyProps {
@@ -58,6 +53,18 @@ export const SlotText = styled(Typography)<SlotTextProps>(
                   }
                 : undefined,
         borderTop: index === 0 ? 'lightgray 1px solid' : undefined,
+    })
+);
+
+export const SlotTextDisabled = styled(Typography)<SlotTextProps>(
+    ({ theme, index, cursor }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '1.3em',
+        borderTop: index === 0 ? 'lightgray 1px solid' : undefined,
+        color: 'lightgray',
     })
 );
 
@@ -102,12 +109,31 @@ export const convertHour = (hour: number) => {
     return hour > 12 ? hour % 12 : hour;
 };
 
+const timeInReserved = (
+    reserved: ReserveDtoType[],
+    hour: number,
+    min: number
+) => {
+    let isIncluded = false;
+    reserved.map((each) => {
+        if (
+            each &&
+            each.date.getHours() === hour &&
+            each.date.getMinutes() === min
+        )
+            isIncluded = true;
+    });
+    return isIncluded;
+};
+
 const renderSlots = (
     data: HourInDay,
     isFirst: boolean,
     enableHover: boolean,
     drawBorder: boolean,
-    ampmType: number // 0 : off, 1 : all ways, 2: first and 12:00
+    ampmType: number, // 0 : off, 1 : all ways, 2: first and 12:00
+    onClickSlot: (hour: number, min: number) => () => void,
+    reserved?: ReserveDtoType[]
 ) => {
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
@@ -118,12 +144,28 @@ const renderSlots = (
                     ((isFirst || data.hour === 12) && index === 0)) && (
                     <AMPM>{getAMPM(data.hour)}</AMPM>
                 )}
-                <SlotText
-                    index={drawBorder ? index : 1}
-                    cursor={enableHover ? 1 : 0}
-                >
-                    {convertHour(data.hour)}:{formatter.format(each)}
-                </SlotText>
+                {reserved &&
+                timeInReserved(
+                    reserved as ReserveDtoType[],
+                    data.hour,
+                    data.slots[index]
+                ) ? (
+                    <SlotTextDisabled
+                        index={drawBorder ? index : 1}
+                        cursor={enableHover ? 1 : 0}
+                        onClick={onClickSlot(data.hour, each)}
+                    >
+                        {convertHour(data.hour)}:{formatter.format(each)}
+                    </SlotTextDisabled>
+                ) : (
+                    <SlotText
+                        index={drawBorder ? index : 1}
+                        cursor={enableHover ? 1 : 0}
+                        onClick={onClickSlot(data.hour, each)}
+                    >
+                        {convertHour(data.hour)}:{formatter.format(each)}
+                    </SlotText>
+                )}
             </>
         );
     });
@@ -138,12 +180,22 @@ export const renderHourNslot = (
     hourData: HourInDay[],
     enableHover: boolean,
     drawBorder: boolean,
-    ampmType: number
+    ampmType: number,
+    onClickSlot: (hour: number, min: number) => () => void,
+    reserved?: ReserveDtoType[]
 ) => {
-    let hourNslots: JSX.Element[] = [];
+    const hourNslots: JSX.Element[] = [];
     hourData.map((data: HourInDay, index) => {
         hourNslots.push(
-            renderSlots(data, index === 0, enableHover, drawBorder, ampmType)
+            renderSlots(
+                data,
+                index === 0,
+                enableHover,
+                drawBorder,
+                ampmType,
+                onClickSlot,
+                reserved
+            )
         );
     });
     return <> {Children.toArray(hourNslots)} </>;
@@ -154,12 +206,30 @@ interface Props {
     end: number;
     slotsPerHour: number;
     date: Date;
+    onClick: (hour: number, min: number) => void;
+    reserved?: ReserveDtoType[];
 }
 
 const Hours = (props: Props) => {
     const hourData = getHours(props.start, props.end, props.slotsPerHour);
     setSlots(hourData, props.slotsPerHour);
-    return <>{renderHourNslot(hourData, true, false, AMPM_FIRST)}</>;
+
+    const handleClickSlot = (hour: number, min: number) => () => {
+        props.onClick(hour, min);
+    };
+
+    return (
+        <>
+            {renderHourNslot(
+                hourData,
+                true,
+                false,
+                AMPM_FIRST,
+                handleClickSlot,
+                props.reserved
+            )}
+        </>
+    );
 };
 
 export default Hours;

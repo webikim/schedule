@@ -1,54 +1,25 @@
 import {
-    Container,
     ListItem,
     ListItemButton,
     ListItemText,
     Typography,
 } from '@mui/material';
-import { useRouter } from 'next/router';
 import { Children } from 'react';
-import { Schedule } from '../../lib/dao/schedule-dao';
-
-import { getString } from '../locale/stringUtil';
-
-const locale = 'en';
-
-const strings = {
-    message: {
-        no_schedule: {
-            en: 'Need to create schedule.',
-            kr: '먼저 예약을 만드세요.',
-        },
-    },
-    label: {},
-};
+import { ScheduleShort } from '../../pages/reserve/register';
 
 interface Props {
-    schedules: Schedule[];
+    schedules: ScheduleShort[];
+    onClick: (index: number) => (event: React.MouseEvent<HTMLElement>) => void;
+    emptymessage: string;
 }
 
 const ScheduleList = (props: Props) => {
-    const { schedules } = props;
-    const router = useRouter();
+    const { schedules, onClick, emptymessage } = props;
     if (!schedules || (schedules && schedules.length === 0)) {
-        return (
-            <Typography>
-                {getString(locale, strings.message.no_schedule)}
-            </Typography>
-        );
+        return <Typography>{emptymessage}</Typography>;
     }
 
     const scheduleList: JSX.Element[] = [];
-    const handleClickSchedule =
-        (index: number) => (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            console.log('item clicked');
-            router.replace(
-                '/schedule/status/' +
-                    schedules[index].id +
-                    '?back=/schedule/status'
-            );
-        };
     schedules.map((each, index) => {
         scheduleList.push(
             <ListItem
@@ -58,7 +29,7 @@ const ScheduleList = (props: Props) => {
             >
                 <ListItemButton
                     sx={{ height: '2.5em' }}
-                    onClick={handleClickSchedule(index)}
+                    onClick={onClick(index)}
                 >
                     <ListItemText
                         primary={each.title}

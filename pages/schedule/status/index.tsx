@@ -1,20 +1,26 @@
-import { Container, styled, Typography, TypographyProps } from '@mui/material';
+import { Container } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import ScheduleList from '../../../components/schedule/ScheduleList';
-import { getScheduleList, Schedule } from '../../../lib/dao/schedule-dao';
+import { getScheduleList } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
+import { TitleText } from '../../../components/theme/styles';
 
 import { getString } from '../../../components/locale/stringUtil';
-import { TitleText } from '../../../components/theme/styles';
+import { ScheduleShort } from '../../reserve/register';
 
 const locale = 'en';
 
 const strings = {
-    message: {},
+    message: {
+        no_schedule: {
+            en: 'Need to create schedule.',
+            kr: '먼저 예약을 만드세요.',
+        },
+    },
     label: {
         statue_title: {
             en: 'Reservation Status',
@@ -30,10 +36,11 @@ const scheduleConfig = {
 };
 
 interface Props {
-    schedules: Schedule[];
+    schedules: ScheduleShort[];
 }
 
 const ScheduleStatusPage = (props: Props) => {
+    const { schedules } = props;
     const router = useRouter();
     useEffect(() => {
         getSession().then((session) => {
@@ -42,6 +49,18 @@ const ScheduleStatusPage = (props: Props) => {
             }
         });
     });
+
+    const handleClickSchedule =
+        (index: number) => (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            console.log('item clicked');
+            router.replace(
+                '/schedule/status/' +
+                    schedules[index].id +
+                    '?back=/schedule/status'
+            );
+        };
+
     const title = getString(locale, strings.label.statue_title);
     return (
         <>
@@ -53,7 +72,14 @@ const ScheduleStatusPage = (props: Props) => {
                 <TitleText>
                     {getString(locale, strings.label.statue_title)}
                 </TitleText>
-                <ScheduleList schedules={props.schedules} />
+                <ScheduleList
+                    schedules={schedules}
+                    onClick={handleClickSchedule}
+                    emptymessage={getString(
+                        locale,
+                        strings.message.no_schedule
+                    )}
+                />
 
                 {/* <ScheduleStatus {...scheduleConfig} date={new Date()} /> */}
             </Container>
@@ -68,7 +94,10 @@ export const getServerSideProps = async (
     // console.log('... re-rendered...');
     if (session) {
         const client = await connectMongo();
-        const schedules = await getScheduleList(client, session.user!.email!);
+        const schedules: ScheduleShort[] = await getScheduleList(
+            client,
+            session.user!.email!
+        );
         await client.close();
         return {
             props: {
