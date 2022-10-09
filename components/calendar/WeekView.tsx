@@ -7,12 +7,12 @@ import {
 } from '@mui/material';
 import { Children } from 'react';
 import dayjs from 'dayjs';
-import Hours from './Hours';
-import { ReserveDtoType } from '../../lib/dao/reserve-dao';
+import Hours, { selectWithDate } from './Hours';
 import DateNavigator from './DateNavigator';
 
 import { getString } from '../locale/stringUtil';
 import { CenteredText } from '../theme/styles';
+import { Reserve } from '../../lib/dao/reserve-dao';
 
 const locale = 'en';
 
@@ -108,18 +108,12 @@ const renderSeperator = (weekData: WeekData[]) => {
 //     return <> {Children.toArray(schedules)} </>;
 // };
 
-const selectWithDate = (reserved: ReserveDtoType[], date: Date) => {
-    return reserved.filter((each) => {
-        return each.date.getDate() === date.getDate();
-    });
-};
-
 interface Props {
     start: number;
     end: number;
     slotsPerHour: number;
     date: Date;
-    reserved: ReserveDtoType[];
+    reserved: Reserve[];
     onClick: (date: Date) => void;
     onClickNavi: (date: Date) => void;
 }
@@ -130,23 +124,28 @@ const WeekView = (props: Props) => {
     const weekData = getWeekData(date);
 
     const handleClickSlot = (data: WeekData) => (hour: number, min: number) => {
-        onClick(dayjs(data.date).hour(hour).minute(min).second(0).toDate());
+        onClick(
+            dayjs(data.date)
+                .hour(hour)
+                .minute(min)
+                .second(0)
+                .millisecond(0)
+                .toDate()
+        );
     };
+
+    // console.log('... reserved 2 = ', props.reserved);
 
     const schedules: JSX.Element[] = [];
     weekData.map((each) => {
         schedules.push(
             <Grid item xs={1.7}>
                 <Hours
+                    date={each.date}
                     start={start}
                     end={end}
                     slotsPerHour={slotsPerHour}
-                    reserved={
-                        selectWithDate(
-                            props.reserved,
-                            each.date
-                        ) as ReserveDtoType[]
-                    }
+                    reserved={selectWithDate(props.reserved, each.date)}
                     onClick={handleClickSlot(each)}
                 ></Hours>
             </Grid>

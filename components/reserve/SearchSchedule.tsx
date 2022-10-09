@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { ScheduleShort } from '../../pages/reserve/register';
@@ -24,7 +25,7 @@ interface Props {
 const SearchSchedule = (props: Props) => {
     const { schedules } = props;
     const router = useRouter();
-    console.log('... schedule = ', props.schedules);
+    console.log('... schedule1 = ', props.schedules);
     const handleClickSchedule =
         (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
@@ -33,7 +34,13 @@ const SearchSchedule = (props: Props) => {
                 '/reserve/register/' +
                     schedules[index].id +
                     '/' +
-                    new Date().toISOString() +
+                    dayjs()
+                        .hour(0)
+                        .minute(0)
+                        .second(0)
+                        .millisecond(0)
+                        .toDate()
+                        .toISOString() +
                     '?back=/reserve/register/'
             );
         };

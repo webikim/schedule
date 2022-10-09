@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { putReserve, ReserveDtoType } from "../../../lib/dao/reserve-dao";
+import { putReserve, Reserve } from "../../../lib/dao/reserve-dao";
 import { connectMongo } from "../../../lib/mongo-helper";
 
 const MONGODB_DB = process.env.MONGODB_DB;
@@ -9,13 +9,12 @@ if (!MONGODB_DB) {
 }
 
 interface TimeApiRequest extends NextApiRequest {
-    body: ReserveDtoType
+    body: Reserve
 }
 
 const handler = async (req: TimeApiRequest, res: NextApiResponse) => {
     switch (req.method) {
         case 'POST':
-            console.log('body = ', req.body)
             const client = await connectMongo();
             const result = await putReserve(client, req.body);
             await client.close();

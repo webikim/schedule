@@ -7,8 +7,10 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
+import dayjs from 'dayjs';
+
 import { CenteredText } from '../theme/styles';
-import { ReserveDtoType } from '../../lib/dao/reserve-dao';
+import { Reserve } from '../../lib/dao/reserve-dao';
 
 export class HourInDay {
     hour: number;
@@ -57,10 +59,38 @@ const AMPM = styled(Typography)<TypographyProps>(({ theme }) => ({
     height: '1.3em',
 }));
 
+export const addMinutes = (date: Date, minutes: number) => {
+    return new Date(date.getTime() + minutes * 60000);
+};
+
+export const slot2Minutes = (slots: number) => {
+    return 60 / slots;
+};
+
 export const getHours = (start: number, end: number, slots: number = 0) => {
     let hourData: HourInDay[] = [];
     for (let i = start; i <= end; i++) hourData.push(new HourInDay(i, slots));
     return hourData;
+};
+
+export const convertReserved = (reserved: Reserve[]) => {
+    return reserved.map((each) => {
+        return {
+            ...each,
+            df: typeof each.df === 'string' ? new Date(each.df) : each.df,
+            dt: typeof each.dt === 'string' ? new Date(each.dt) : each.dt,
+        };
+    });
+};
+
+export const selectWithDate = (reserved: Reserve[], date: Date) => {
+    return reserved.filter((each) => {
+        return (
+            each.df.getTime() >= date.getTime() &&
+            each.dt.getTime() <=
+                dayjs(date).hour(23).minute(59).second(59).valueOf()
+        );
+    });
 };
 
 export const renderHourTitles = (hourData: HourInDay[]) => {
@@ -94,25 +124,24 @@ export const convertHour = (hour: number) => {
 };
 
 export const timeInReserved = (
-    reserved: ReserveDtoType[],
+    date: Date,
+    reserved: Reserve[],
     hour: number,
     min: number
-): ReserveDtoType[] => {
+): Reserve[] => {
+    const compdate = dayjs(date).hour(hour).minute(min).second(0).valueOf();
     return reserved.filter((each) => {
-        return (
-            each &&
-            each.date.getHours() === hour &&
-            each.date.getMinutes() === min
-        );
+        return each !== undefined && dayjs(each.df).valueOf() === compdate;
     });
 };
 
 const renderSlots = (
+    date: Date,
     data: HourInDay,
     isFirst: boolean,
     ampmType: number, // 0 : off, 1 : all ways, 2: first and 12:00
     onClickSlot: (hour: number, min: number) => () => void,
-    reserved: ReserveDtoType[]
+    reserved: Reserve[]
 ) => {
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
@@ -125,11 +154,8 @@ const renderSlots = (
                         index === 0)) && <AMPM>{getAMPM(data.hour)}</AMPM>}
                 {reserved &&
                 reserved.length > 0 &&
-                timeInReserved(
-                    reserved as ReserveDtoType[],
-                    data.hour,
-                    data.slots[index]
-                ).length > 0 ? (
+                timeInReserved(date, reserved, data.hour, data.slots[index])
+                    .length > 0 ? (
                     <SlotTextDisabled onClick={onClickSlot(data.hour, each)}>
                         {convertHour(data.hour)}:{formatter.format(each)}
                     </SlotTextDisabled>
@@ -149,11 +175,12 @@ const renderSlots = (
 };
 
 interface Props {
+    date: Date;
     start: number;
     end: number;
     slotsPerHour: number;
     onClick: (hour: number, min: number) => void;
-    reserved: ReserveDtoType[];
+    reserved: Reserve[];
 }
 
 const Hours = (props: Props) => {
@@ -168,6 +195,7 @@ const Hours = (props: Props) => {
     hourData.map((data: HourInDay, index) => {
         hourNslots.push(
             renderSlots(
+                props.date,
                 data,
                 index === 0,
                 AMPM_FIRST,

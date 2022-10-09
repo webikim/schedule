@@ -4,19 +4,27 @@ const MONGODB_DB = process.env.MONGODB_DB;
 const SCHEDULE_COLLECTION = 'schedule';
 
 export type Schedule = {
-    id: string | null;
+    id?: string;
     title: string;
     desc: string;
     contact: string;
     datefrom: Date;
-    dateto: Date | null;
+    dateto?: Date | null;
     timefrom: Date;
     timeto: Date;
     created: Date;
-    slots: string;
+    slots: number;
     offday: Date[];
     createdby: string;
 }
+
+// export const addMinutes = (date: Date, minutes: number) => {
+//     return new Date(date.getTime() + minutes * 60000);
+// }
+
+// export const slot2Minutes = (slots: number) => {
+//     return 60 / slots
+// }
 
 export const putSchedule = async (client: MongoClient, schedule: Schedule) => {
     const db = client.db(MONGODB_DB);

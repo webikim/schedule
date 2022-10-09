@@ -2,23 +2,24 @@ import { GetServerSidePropsContext } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
-import dayjs from 'dayjs';
+import { Box, Container } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import WeekView from '../../../components/calendar/WeekView';
+import dayjs from 'dayjs';
+
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
-import { Box, Container } from '@mui/material';
 import { LinkText, TitleText } from '../../../components/theme/styles';
+import NotificationContext from '../../../store/notification-context';
+import { getWeekReserve, Reserve } from '../../../lib/dao/reserve-dao';
+import { filetrPathName } from '../../../components/menu/menuUtil';
+import {
+    addMinutes,
+    convertReserved,
+    slot2Minutes,
+} from '../../../components/calendar/Hours';
+import WeekView from '../../../components/calendar/WeekView';
 
 import { getString } from '../../../components/locale/stringUtil';
-import NotificationContext from '../../../store/notification-context';
-import {
-    convertReserve2Dto,
-    getWeekReserve,
-    Reserve,
-    ReserveDtoType,
-} from '../../../lib/dao/reserve-dao';
-import { filetrPathName } from '../../../components/menu/menuUtil';
 
 const locale = 'en';
 
@@ -53,28 +54,39 @@ interface Props {
 }
 
 const DayRegisterPage = (props: Props) => {
-    const [reserved, setReserved] = useState(
-        convertReserve2Dto(props.reserved)
+    const [reserved, setReserved] = useState<Reserve[]>(
+        convertReserved(props.reserved)
     );
     const notificationCtx = useContext(NotificationContext);
     const session = useSession();
     const router = useRouter();
     const { timefrom, timeto, slots } = props.schedule;
+
     const title =
         getString(locale, strings.label.register_title) + props.schedule.title;
 
     const addToReserved = (email: string, date: Date) => {
-        setReserved([...reserved, { email: email, date: date }]);
+        setReserved([
+            ...reserved,
+            {
+                sch: props.schedule.id!,
+                em: email,
+                df: date,
+                dt: addMinutes(date, slot2Minutes(props.schedule.slots)),
+            },
+        ]);
     };
 
     const handleClickTime = async (date: Date) => {
+        const reserve: Reserve = {
+            sch: props.schedule.id!,
+            em: session.data!.user!.email!,
+            df: date,
+            dt: addMinutes(date, slot2Minutes(props.schedule.slots)),
+        };
         const response = await fetch('/api/reserve', {
             method: 'POST',
-            body: JSON.stringify({
-                email: session.data?.user?.email,
-                schedule: props.schedule.id,
-                date: date,
-            }),
+            body: JSON.stringify(reserve),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -101,7 +113,13 @@ const DayRegisterPage = (props: Props) => {
                 '/' +
                 props.schedule.id +
                 '/' +
-                dayjs(date).format('YYYY-MM-DD') +
+                dayjs(date)
+                    .hour(0)
+                    .minute(0)
+                    .second(0)
+                    .millisecond(0)
+                    .toDate()
+                    .toISOString() +
                 '?back=' +
                 props.routeback
         );
@@ -125,7 +143,7 @@ const DayRegisterPage = (props: Props) => {
                 <WeekView
                     start={dayjs(timefrom).hour()}
                     end={dayjs(timeto).hour()}
-                    slotsPerHour={parseInt(slots)}
+                    slotsPerHour={slots}
                     date={dayjs(props.date).toDate()}
                     reserved={reserved}
                     onClick={handleClickTime}
@@ -145,8 +163,12 @@ export const getServerSideProps = async (
     if (session && id) {
         const client = await connectMongo();
         const schedule = await getSchedule(client, id as string);
-        const reserved = await getWeekReserve(client, id as string, date);
-        // console.log('.. reserved = ', reserved);
+        const reserved = await getWeekReserve(
+            client,
+            id as string,
+            new Date(date)
+        );
+        console.log('>>>> reserved 1 = ', reserved);
         await client.close();
         return {
             props: {

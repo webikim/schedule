@@ -12,12 +12,7 @@ import { useRouter } from 'next/router';
 import { getString } from '../../../components/locale/stringUtil';
 import { LinkText, TitleText } from '../../../components/theme/styles';
 import Head from 'next/head';
-import {
-    convertReserve2Dto,
-    getReserve,
-    Reserve,
-    ReserveDtoType,
-} from '../../../lib/dao/reserve-dao';
+import { getDayReserve, Reserve } from '../../../lib/dao/reserve-dao';
 import { filetrPathName } from '../../../components/menu/menuUtil';
 
 const locale = 'en';
@@ -56,7 +51,13 @@ const DayScheduleStatusPage = (props: Props) => {
                 '/' +
                 props.schedule.id +
                 '/' +
-                dayjs(date).format('YYYY-MM-DD') +
+                dayjs(date)
+                    .hour(0)
+                    .minute(0)
+                    .second(0)
+                    .millisecond(0)
+                    .toDate()
+                    .toISOString() +
                 '?back=' +
                 props.routeback
         );
@@ -87,9 +88,9 @@ const DayScheduleStatusPage = (props: Props) => {
                     <DayScheduleStatus
                         start={dayjs(timefrom).hour()}
                         end={dayjs(timeto).hour()}
-                        slotsPerHour={parseInt(slots)}
+                        slotsPerHour={slots}
                         date={dayjs(props.date).toDate()}
-                        reserved={convertReserve2Dto(props.reserved)}
+                        reserved={props.reserved}
                         onClickNavi={handleNavi}
                         onClick={handleClickSchedule}
                     />
@@ -109,7 +110,12 @@ export const getServerSideProps = async (
     if (session && id) {
         const client = await connectMongo();
         const schedule = await getSchedule(client, id as string);
-        const reserved = await getReserve(client, id as string, date);
+        const reserved = await getDayReserve(
+            client,
+            id as string,
+            new Date(date)
+        );
+        console.log('... reserved = ', reserved);
         await client.close();
         return {
             props: {

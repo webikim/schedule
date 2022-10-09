@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import DateNavigator from '../calendar/DateNavigator';
 import { CenteredText } from '../theme/styles';
 import HoursReserved from '../calendar/HourReserved';
-import { ReserveDtoType } from '../../lib/dao/reserve-dao';
+import { Reserve } from '../../lib/dao/reserve-dao';
 
 const locale = 'en';
 
@@ -64,7 +64,7 @@ interface Props {
     end: number;
     slotsPerHour: number;
     date: Date;
-    reserved: ReserveDtoType[];
+    reserved: Reserve[];
     onClick: () => void;
     onClickNavi: (date: Date) => void;
 }
@@ -104,6 +104,7 @@ const DayScheduleStatus = (props: Props) => {
                 </Typography>
             </Box>
             <HoursReserved
+                date={date}
                 start={start}
                 end={end}
                 slotsPerHour={slotsPerHour}

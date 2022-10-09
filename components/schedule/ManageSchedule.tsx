@@ -68,8 +68,13 @@ const renderScheduleList = (
                 '/schedule/status/' +
                     data[index].id +
                     '/' +
-                    // new Date().toISOString() +
-                    dayjs().format('YYYY-MM-DD') +
+                    dayjs()
+                        .hour(0)
+                        .minute(0)
+                        .second(0)
+                        .millisecond(0)
+                        .toDate()
+                        .toISOString() +
                     '?back=/schedule/manage/'
             );
         };

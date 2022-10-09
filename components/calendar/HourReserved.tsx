@@ -8,7 +8,6 @@ import {
     TypographyProps,
 } from '@mui/material';
 import { CenteredText } from '../theme/styles';
-import { ReserveDtoType } from '../../lib/dao/reserve-dao';
 import {
     HourInDay,
     getAMPM,
@@ -19,6 +18,7 @@ import {
     setSlots,
     timeInReserved,
 } from './Hours';
+import { Reserve } from '../../lib/dao/reserve-dao';
 
 interface SlotTextProps extends TypographyProps {
     index: number;
@@ -64,15 +64,16 @@ export const renderHourTitles = (hourData: HourInDay[]) => {
 };
 
 const renderReserved = (
+    date: Date,
     hour: number,
     min: number,
-    reserved: ReserveDtoType[]
+    reserved: Reserve[]
 ) => {
-    const selected = timeInReserved(reserved, hour, min);
+    const selected = timeInReserved(date, reserved, hour, min);
     return selected.length ? (
         <>
             <Typography sx={{ paddingLeft: 1 }}>
-                {selected.map((each) => each.email)}
+                {selected.map((each) => each.em)}
             </Typography>
         </>
     ) : (
@@ -81,11 +82,12 @@ const renderReserved = (
 };
 
 const renderSlots = (
+    date: Date,
     data: HourInDay,
     isFirst: boolean,
     drawBorder: boolean,
     ampmType: number, // 0 : off, 1 : all ways, 2: first and 12:00
-    reserved: ReserveDtoType[]
+    reserved: Reserve[]
 ) => {
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
@@ -108,7 +110,7 @@ const renderSlots = (
                             <Filler index={1}> </Filler>
                         )}
                         <Filler index={index}>
-                            {renderReserved(data.hour, each, reserved)}
+                            {renderReserved(date, data.hour, each, reserved)}
                         </Filler>
                     </Grid>
                 </Grid>
@@ -123,11 +125,12 @@ const renderSlots = (
 };
 
 interface Props {
+    date: Date;
     start: number;
     end: number;
     slotsPerHour: number;
     onClick: (hour: number, min: number) => void;
-    reserved: ReserveDtoType[];
+    reserved: Reserve[];
 }
 
 const HoursReserved = (props: Props) => {
@@ -141,7 +144,14 @@ const HoursReserved = (props: Props) => {
     const hourNslots: JSX.Element[] = [];
     hourData.map((data: HourInDay, index) => {
         hourNslots.push(
-            renderSlots(data, index === 0, true, AMPM_FIRST, props.reserved)
+            renderSlots(
+                props.date,
+                data,
+                index === 0,
+                true,
+                AMPM_FIRST,
+                props.reserved
+            )
         );
     });
 
