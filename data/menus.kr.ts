@@ -32,12 +32,6 @@ export const menus = [
             sicon: 'CalendarMonthOutlined',
             route: '/reserve/status'
         },
-        {
-            title: '자주하는 예약',
-            picon: 'Repeat',
-            sicon: 'RepeatOn',
-            route: '/reserve/favorite'
-        },
     ],
     [
         {

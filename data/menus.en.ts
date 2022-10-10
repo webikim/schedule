@@ -32,12 +32,6 @@ export const menus = [
             sicon: 'CalendarMonthOutlined',
             route: '/reserve/status'
         },
-        {
-            title: 'Manage Favorite',
-            picon: 'Repeat',
-            sicon: 'RepeatOn',
-            route: '/reserve/favorite'
-        },
     ],
     [
         {

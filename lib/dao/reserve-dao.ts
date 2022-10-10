@@ -1,8 +1,9 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import dayjs from 'dayjs';
+import { SCHEDULE_COLLECTION } from './schedule-dao';
 
 const MONGODB_DB = process.env.MONGODB_DB;
-const RESERVE_COLLECTION = 'reserve';
+export const RESERVE_COLLECTION = 'reserve';
 
 export type Reserve = {
     sch: string,    // schedule id
@@ -54,4 +55,44 @@ export const getDayReserve = (client: MongoClient, id: string, date: Date) => {
     const dateto = new Date(date);
     dateto.setDate(dateto.getDate() + 1);
     return getReserve(client, id, date, dateto);
+}
+
+export const getReserveByUser = async (client: MongoClient, email: string, datefrom: Date, dateto: Date) => {
+    const db = client.db(MONGODB_DB);
+    const col = db.collection(RESERVE_COLLECTION);
+    const rawlist = await col.aggregate([
+        { $project: { sch: { $toObjectId: "$sch" }, em: 1, df: 1, dt: 1, nt: 1 } },
+        {
+            $lookup: {
+                from: "schedule",
+                localField: "sch",
+                foreignField: "_id",
+                as: "schedule"
+            }
+        },
+        {
+            $match: {
+                $and: [{ em: { $eq: email } },
+                { df: { $gte: datefrom } },
+                { dt: { $lt: dateto } }]
+            }
+        },
+        { "$project": { "sch": { "$toObjectId": "$sch" }, "em": 1, "df": 1, "dt": 1, "nt": 1, "sch_name": "$schedule.title" } },
+    ]).toArray();
+    return rawlist.map((each) => {
+        return {
+            sch: each.sch.toString(),
+            sch_name: each.sch_name[0],
+            em: each.em,
+            df: each.df.toISOString(),
+            dt: each.dt.toISOString(),
+            nt: each.nt || null
+        }
+    })
+}
+
+export const getDayReserveByUser = (client: MongoClient, email: string, date: Date) => {
+    const dateto = new Date(date);
+    dateto.setDate(dateto.getDate() + 1);
+    return getReserveByUser(client, email, date, dateto);
 }

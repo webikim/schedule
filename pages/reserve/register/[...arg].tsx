@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Container } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import dayjs from 'dayjs';
@@ -58,6 +58,9 @@ const DayRegisterPage = (props: Props) => {
     const [reserved, setReserved] = useState<Reserve[]>(
         convertReserved(props.reserved)
     );
+    useEffect(() => {
+        setReserved(convertReserved(props.reserved));
+    }, [props.reserved]);
     const notificationCtx = useContext(NotificationContext);
     const session = useSession();
     const router = useRouter();

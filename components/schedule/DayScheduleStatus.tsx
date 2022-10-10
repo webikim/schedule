@@ -1,15 +1,15 @@
-import { Box, BoxProps, styled, Typography } from '@mui/material';
-import React, { Children, useContext } from 'react';
 import dayjs from 'dayjs';
-import { getHours, HourInDay, setSlots } from '../calendar/Hours';
-
-import { getString } from '../locale/stringUtil';
+import { Box, BoxProps, styled, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import React, { Children, useContext } from 'react';
+import { getHours, HourInDay, setSlots } from '../calendar/Hours';
 import DateNavigator from '../calendar/DateNavigator';
 import { CenteredText } from '../theme/styles';
 import HoursReserved from '../calendar/HourReserved';
 import { Reserve } from '../../lib/dao/reserve-dao';
 import LocaleContext from '../../store/localeContext';
+
+import { getString } from '../locale/stringUtil';
 
 const locale = 'en';
 
