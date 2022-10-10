@@ -10,6 +10,7 @@ import {
     TypographyProps,
 } from '@mui/material';
 import React, { useContext } from 'react';
+import LocaleContext from '../../store/localeContext';
 import NotificationContext from '../../store/notification-context';
 
 import { getString } from '../locale/stringUtil';
@@ -75,6 +76,9 @@ interface Props {
 const Profile = (props: Props) => {
     const notificationCtx = useContext(NotificationContext);
 
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -106,7 +110,7 @@ const Profile = (props: Props) => {
         });
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: getString(locale, strings.message.update_failed),
+                message: getString(lang, strings.message.update_failed),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -114,7 +118,7 @@ const Profile = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: getString(locale, strings.message.update_success),
+            message: getString(lang, strings.message.update_success),
             status: 'success',
         });
     };
@@ -122,7 +126,7 @@ const Profile = (props: Props) => {
         <>
             <Container component="main" maxWidth="xs">
                 <CenteredText sx={{ fontSize: 20 }}>
-                    {getString(locale, strings.label.profile_title)}
+                    {getString(lang, strings.label.profile_title)}
                 </CenteredText>
                 <Box
                     sx={{
@@ -145,7 +149,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="fullname"
                         name="fullname"
-                        label={getString(locale, strings.label.fullname)}
+                        label={getString(lang, strings.label.fullname)}
                         autoComplete="fullname"
                         autoFocus
                         defaultValue={props.fullname}
@@ -156,7 +160,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="contact"
                         name="contact"
-                        label={getString(locale, strings.label.contact)}
+                        label={getString(lang, strings.label.contact)}
                         autoComplete="contact"
                         size="small"
                     />
@@ -165,7 +169,7 @@ const Profile = (props: Props) => {
                         fullWidth
                         id="bio"
                         name="bio"
-                        label={getString(locale, strings.label.bio)}
+                        label={getString(lang, strings.label.bio)}
                         autoComplete="bio"
                         size="small"
                     />
@@ -175,7 +179,7 @@ const Profile = (props: Props) => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        {getString(locale, strings.label.update_button)}
+                        {getString(lang, strings.label.update_button)}
                     </Button>
                 </Box>
             </Container>

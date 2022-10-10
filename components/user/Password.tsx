@@ -10,7 +10,8 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
+import LocaleContext from '../../store/localeContext';
 
 import { getString } from '../locale/stringUtil';
 
@@ -63,7 +64,10 @@ interface Props {
     email: string;
 }
 
-export default function Password(props: Props) {
+const Password = (props: Props) => {
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     return (
         <>
             <Container component="main" maxWidth="xs">
@@ -84,7 +88,7 @@ export default function Password(props: Props) {
                     fullWidth
                     id="oldpassword"
                     name="oldpassword"
-                    label={getString(locale, strings.label.password)}
+                    label={getString(lang, strings.label.password)}
                     type="password"
                     size="small"
                 />
@@ -93,7 +97,7 @@ export default function Password(props: Props) {
                     fullWidth
                     id="newpassword"
                     name="newpassword"
-                    label={getString(locale, strings.label.new_password)}
+                    label={getString(lang, strings.label.new_password)}
                     type="password"
                     size="small"
                 />
@@ -102,11 +106,13 @@ export default function Password(props: Props) {
                     fullWidth
                     id="repassword"
                     name="repassword"
-                    label={getString(locale, strings.label.re_password)}
+                    label={getString(lang, strings.label.re_password)}
                     type="password"
                     size="small"
                 />
             </Container>
         </>
     );
-}
+};
+
+export default Password;
