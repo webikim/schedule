@@ -11,7 +11,7 @@ import {
     TextFieldProps,
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
-import React, { Dispatch, useState } from 'react';
+import React, { Dispatch, useContext, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -21,6 +21,7 @@ import { useSession } from 'next-auth/react';
 import { Schedule } from '../../lib/dao/schedule-dao';
 
 import { getString } from '../locale/stringUtil';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -90,15 +91,19 @@ interface Props {
 
 const BuildScheduleForm = (props: Props) => {
     const { schedule } = props;
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const [datefrom, setDatefrom] = useState<Dayjs>(
         schedule && schedule.datefrom
             ? dayjs(schedule.datefrom)
-            : dayjs().hour(0).minute(0).second(0)
+            : dayjs().hour(0).minute(0).second(0).millisecond(0)
     );
     const [dateto, setDateto] = useState<Dayjs>(
         schedule && schedule.dateto
             ? dayjs(schedule.dateto)
-            : dayjs().hour(0).minute(0).second(0)
+            : dayjs().hour(0).minute(0).second(0).millisecond(0)
     );
     const [timefrom, setTimefrom] = useState<Dayjs>(
         schedule && schedule.timefrom
@@ -115,7 +120,6 @@ const BuildScheduleForm = (props: Props) => {
     const handleChange =
         (setter: Dispatch<React.SetStateAction<Dayjs>>) =>
         (date: Dayjs | null) => {
-            console.log('date = ', date);
             if (date) {
                 setter(date);
             }
@@ -159,7 +163,7 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="title"
                             name="title"
-                            label={getString(locale, strings.label.title)}
+                            label={getString(lang, strings.label.title)}
                             autoFocus
                             defaultValue={schedule && schedule.title}
                             size="small"
@@ -169,7 +173,7 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="desc"
                             name="desc"
-                            label={getString(locale, strings.label.desc)}
+                            label={getString(lang, strings.label.desc)}
                             defaultValue={schedule && schedule.desc}
                             size="small"
                             multiline
@@ -180,17 +184,14 @@ const BuildScheduleForm = (props: Props) => {
                             fullWidth
                             id="contact"
                             name="contact"
-                            label={getString(locale, strings.label.contact)}
+                            label={getString(lang, strings.label.contact)}
                             defaultValue={schedule && schedule.contact}
                             size="small"
                         />
 
                         <Box sx={{ display: 'flex' }}>
                             <DesktopDatePicker
-                                label={getString(
-                                    locale,
-                                    strings.label.fromdate
-                                )}
+                                label={getString(lang, strings.label.fromdate)}
                                 inputFormat="MM/DD/YYYY"
                                 value={datefrom}
                                 onChange={handleChange(setDatefrom)}
@@ -202,7 +203,7 @@ const BuildScheduleForm = (props: Props) => {
                                 sx={{ paddingTop: '0.5em' }}
                             ></RemoveIcon>
                             <DesktopDatePicker
-                                label={getString(locale, strings.label.todate)}
+                                label={getString(lang, strings.label.todate)}
                                 inputFormat="MM/DD/YYYY"
                                 value={dateto}
                                 onChange={handleChange(setDateto)}
@@ -214,10 +215,7 @@ const BuildScheduleForm = (props: Props) => {
 
                         <Box sx={{ display: 'flex' }}>
                             <TimePicker
-                                label={getString(
-                                    locale,
-                                    strings.label.starttime
-                                )}
+                                label={getString(lang, strings.label.starttime)}
                                 value={timefrom}
                                 onChange={handleChange(setTimefrom)}
                                 renderInput={(params) => (
@@ -228,7 +226,7 @@ const BuildScheduleForm = (props: Props) => {
                                 sx={{ paddingTop: '0.5em' }}
                             ></RemoveIcon>
                             <TimePicker
-                                label={getString(locale, strings.label.endtime)}
+                                label={getString(lang, strings.label.endtime)}
                                 value={timeto}
                                 onChange={handleChange(setTimeto)}
                                 renderInput={(params) => (
@@ -238,7 +236,7 @@ const BuildScheduleForm = (props: Props) => {
                         </Box>
                         <FormControl>
                             <FormLabel id="slots-per-hour">
-                                {getString(locale, strings.label.duration)}
+                                {getString(lang, strings.label.duration)}
                             </FormLabel>
                             <RadioGroup
                                 row
@@ -249,16 +247,13 @@ const BuildScheduleForm = (props: Props) => {
                                 <FormControlLabel
                                     value="1"
                                     control={<Radio />}
-                                    label={getString(
-                                        locale,
-                                        strings.label.hour
-                                    )}
+                                    label={getString(lang, strings.label.hour)}
                                 />
                                 <FormControlLabel
                                     value="2"
                                     control={<Radio />}
                                     label={getString(
-                                        locale,
+                                        lang,
                                         strings.label.halfhour
                                     )}
                                 />
@@ -271,8 +266,8 @@ const BuildScheduleForm = (props: Props) => {
                             sx={{ mt: 3, mb: 2 }}
                         >
                             {schedule
-                                ? getString(locale, strings.label.update)
-                                : getString(locale, strings.label.create)}
+                                ? getString(lang, strings.label.update)
+                                : getString(lang, strings.label.create)}
                         </Button>
                     </Box>
                 </Box>

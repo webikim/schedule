@@ -20,6 +20,7 @@ import {
 import WeekView from '../../../components/calendar/WeekView';
 
 import { getString } from '../../../components/locale/stringUtil';
+import LocaleContext from '../../../store/localeContext';
 
 const locale = 'en';
 
@@ -62,8 +63,11 @@ const DayRegisterPage = (props: Props) => {
     const router = useRouter();
     const { timefrom, timeto, slots } = props.schedule;
 
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const title =
-        getString(locale, strings.label.register_title) + props.schedule.title;
+        getString(lang, strings.label.register_title) + props.schedule.title;
 
     const addToReserved = (email: string, date: Date) => {
         setReserved([
@@ -93,7 +97,7 @@ const DayRegisterPage = (props: Props) => {
         });
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: getString(locale, strings.message.register_failed),
+                message: getString(lang, strings.message.register_failed),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -101,7 +105,7 @@ const DayRegisterPage = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: getString(locale, strings.message.register_success),
+            message: getString(lang, strings.message.register_success),
             status: 'success',
         });
         addToReserved(session.data!.user!.email!, date);
@@ -134,7 +138,7 @@ const DayRegisterPage = (props: Props) => {
                         router.replace(props.routeback);
                     }}
                 >
-                    {getString(locale, strings.label.to_list)}
+                    {getString(lang, strings.label.to_list)}
                 </LinkText>
             </Box>
 
@@ -168,7 +172,6 @@ export const getServerSideProps = async (
             id as string,
             new Date(date)
         );
-        console.log('>>>> reserved 1 = ', reserved);
         await client.close();
         return {
             props: {

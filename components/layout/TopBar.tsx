@@ -16,6 +16,7 @@ import { AccountCircle } from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 
 import { getString } from '../locale/stringUtil';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -33,7 +34,7 @@ const strings = {
     },
 };
 
-export const menus = {
+export const menus: { [x: string]: string[] } = {
     en: ['Home', 'Schedule', 'Reserve'],
     kr: ['홈', '예약만들기', '예약하기'],
 };
@@ -78,6 +79,10 @@ const TopBar = (props: Props) => {
     const menuCtx = useContext(MenuContext);
     const { data } = useSession();
     const router = useRouter();
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const theme = useTheme();
     let position = menuCtx.navigation?.position;
 
@@ -136,7 +141,7 @@ const TopBar = (props: Props) => {
 
                     <Box sx={{ flexGrow: 1, display: 'flex' }}>
                         {data &&
-                            menus[locale].map((menu, index) => {
+                            menus[lang].map((menu, index) => {
                                 const background =
                                     index - 1 === position?.top
                                         ? theme.palette.primary.dark
@@ -162,13 +167,13 @@ const TopBar = (props: Props) => {
                             color="inherit"
                             onClick={() => router.replace('/auth')}
                         >
-                            {getString(locale, strings.label.signin_menu)}
+                            {getString(lang, strings.label.signin_menu)}
                         </Button>
                     )}
                     {data && (
                         <>
                             <Button color="inherit" onClick={() => signOut()}>
-                                {getString(locale, strings.label.signout_menu)}
+                                {getString(lang, strings.label.signout_menu)}
                             </Button>
                             <IconButton
                                 size="large"

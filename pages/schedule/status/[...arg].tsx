@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import dayjs from 'dayjs';
 import DayScheduleStatus from '../../../components/schedule/DayScheduleStatus';
 import { getSchedule, Schedule } from '../../../lib/dao/schedule-dao';
@@ -14,6 +14,7 @@ import { LinkText, TitleText } from '../../../components/theme/styles';
 import Head from 'next/head';
 import { getDayReserve, Reserve } from '../../../lib/dao/reserve-dao';
 import { filetrPathName } from '../../../components/menu/menuUtil';
+import LocaleContext from '../../../store/localeContext';
 
 const locale = 'en';
 
@@ -40,10 +41,21 @@ interface Props {
 
 const DayScheduleStatusPage = (props: Props) => {
     const router = useRouter();
-    const { timefrom, timeto, slots } = props.schedule;
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
+    useEffect(() => {
+        getSession().then((session) => {
+            if (!session) {
+                router.replace('/auth');
+            }
+        });
+    });
 
     const title =
-        props.schedule.title + getString(locale, strings.label.statue_title);
+        (props.schedule && props.schedule.title) +
+        getString(lang, strings.label.statue_title);
 
     const handleNavi = (date: Date) => {
         router.replace(
@@ -79,21 +91,23 @@ const DayScheduleStatusPage = (props: Props) => {
                             router.replace(props.routeback);
                         }}
                     >
-                        {getString(locale, strings.label.to_list)}
+                        {getString(lang, strings.label.to_list)}
                     </LinkText>
                 </Box>
 
                 <Box sx={{ marginTop: 4 }}>
                     <TitleText>{title}</TitleText>
-                    <DayScheduleStatus
-                        start={dayjs(timefrom).hour()}
-                        end={dayjs(timeto).hour()}
-                        slotsPerHour={slots}
-                        date={dayjs(props.date).toDate()}
-                        reserved={props.reserved}
-                        onClickNavi={handleNavi}
-                        onClick={handleClickSchedule}
-                    />
+                    {props.schedule && (
+                        <DayScheduleStatus
+                            start={dayjs(props.schedule.timefrom).hour()}
+                            end={dayjs(props.schedule.timeto).hour()}
+                            slotsPerHour={props.schedule.slots}
+                            date={dayjs(props.date).toDate()}
+                            reserved={props.reserved}
+                            onClickNavi={handleNavi}
+                            onClick={handleClickSchedule}
+                        />
+                    )}
                 </Box>
             </Container>
         </>
@@ -115,7 +129,6 @@ export const getServerSideProps = async (
             id as string,
             new Date(date)
         );
-        console.log('... reserved = ', reserved);
         await client.close();
         return {
             props: {

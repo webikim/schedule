@@ -12,6 +12,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { getString } from '../../../components/locale/stringUtil';
 import { LinkText, TitleText } from '../../../components/theme/styles';
 import Head from 'next/head';
+import LocaleContext from '../../../store/localeContext';
 
 const locale = 'en';
 
@@ -44,9 +45,12 @@ interface Props {
 
 const UpdateSchedulePage = (props: Props) => {
     const router = useRouter();
-    const { id } = router.query;
     const notificationCtx = useContext(NotificationContext);
-    console.log('schedule = ', props.schedule);
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
+    const { id } = router.query;
 
     const handleSubmit = async (jsonData: string) => {
         console.log('jsondata = ', jsonData);
@@ -59,7 +63,7 @@ const UpdateSchedulePage = (props: Props) => {
         });
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: getString(locale, strings.message.update_failed),
+                message: getString(lang, strings.message.update_failed),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -67,7 +71,7 @@ const UpdateSchedulePage = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: getString(locale, strings.message.update_success),
+            message: getString(lang, strings.message.update_success),
             status: 'success',
         });
     };
@@ -75,7 +79,7 @@ const UpdateSchedulePage = (props: Props) => {
     return (
         <>
             <Head>
-                <title>{getString(locale, strings.label.update_title)}</title>
+                <title>{getString(lang, strings.label.update_title)}</title>
             </Head>
 
             <Container maxWidth="xs" sx={{ marginTop: 1 }}>
@@ -86,12 +90,12 @@ const UpdateSchedulePage = (props: Props) => {
                             router.replace('/schedule/manage/');
                         }}
                     >
-                        {getString(locale, strings.label.to_list)}
+                        {getString(lang, strings.label.to_list)}
                     </LinkText>
                 </Box>
                 <Box sx={{ marginTop: 4 }}>
                     <TitleText>
-                        {getString(locale, strings.label.update_title)}
+                        {getString(lang, strings.label.update_title)}
                     </TitleText>
                     <BuildScheduleForm
                         schedule={props.schedule}

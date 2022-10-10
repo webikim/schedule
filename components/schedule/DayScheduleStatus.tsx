@@ -1,5 +1,5 @@
 import { Box, BoxProps, styled, Typography } from '@mui/material';
-import React, { Children } from 'react';
+import React, { Children, useContext } from 'react';
 import dayjs from 'dayjs';
 import { getHours, HourInDay, setSlots } from '../calendar/Hours';
 
@@ -9,6 +9,7 @@ import DateNavigator from '../calendar/DateNavigator';
 import { CenteredText } from '../theme/styles';
 import HoursReserved from '../calendar/HourReserved';
 import { Reserve } from '../../lib/dao/reserve-dao';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -72,6 +73,10 @@ interface Props {
 const DayScheduleStatus = (props: Props) => {
     const { start, end, slotsPerHour, date, onClick } = props;
     const router = useRouter();
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const hourData = getHours(start, end, slotsPerHour);
     setSlots(hourData, slotsPerHour);
 
@@ -100,7 +105,7 @@ const DayScheduleStatus = (props: Props) => {
                         paddingLeft: 1,
                     }}
                 >
-                    {getString(locale, strings.message.select_to_update)}
+                    {getString(lang, strings.message.select_to_update)}
                 </Typography>
             </Box>
             <HoursReserved

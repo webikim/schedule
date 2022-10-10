@@ -8,6 +8,7 @@ import { Schedule } from '../../lib/dao/schedule-dao';
 import { getString } from '../../components/locale/stringUtil';
 import NotificationContext from '../../store/notification-context';
 import BuildScheduleForm from '../../components/schedule/BuildScheduleForm';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -44,6 +45,10 @@ const CreateSchedulePage = (props: Props) => {
             }
         });
     });
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const handleSubmit = async (jsonData: string) => {
         const response = await fetch('/api/schedule', {
             method: 'POST',
@@ -55,7 +60,7 @@ const CreateSchedulePage = (props: Props) => {
 
         if (!response.ok) {
             notificationCtx.showNotification({
-                message: getString(locale, strings.message.fail),
+                message: getString(lang, strings.message.fail),
                 status: 'error',
             });
             console.log('Schedule create failed.');
@@ -63,7 +68,7 @@ const CreateSchedulePage = (props: Props) => {
         }
         console.log('success ', await response.json());
         notificationCtx.showNotification({
-            message: getString(locale, strings.message.success),
+            message: getString(lang, strings.message.success),
             status: 'success',
         });
     };
@@ -77,7 +82,7 @@ const CreateSchedulePage = (props: Props) => {
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
                 <TitleText sx={{ fontSize: 20 }}>
-                    {getString(locale, strings.label.new_schedule)}
+                    {getString(lang, strings.label.new_schedule)}
                 </TitleText>
                 <BuildScheduleForm onSubmit={handleSubmit} />;
             </Container>

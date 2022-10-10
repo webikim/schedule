@@ -63,7 +63,6 @@ const renderScheduleList = (
     const handleClickSchedule =
         (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            console.log('item clicked');
             router.replace(
                 '/schedule/status/' +
                     data[index].id +

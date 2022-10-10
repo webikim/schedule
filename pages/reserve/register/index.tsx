@@ -3,13 +3,14 @@ import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { getScheduleList } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
 import SearchSchedule from '../../../components/reserve/SearchSchedule';
 import { TitleText } from '../../../components/theme/styles';
 
 import { getString } from '../../../components/locale/stringUtil';
+import LocaleContext from '../../../store/localeContext';
 
 const locale = 'en';
 
@@ -36,6 +37,10 @@ interface Props {
 
 const ReserveRegisterPage = (props: Props) => {
     const router = useRouter();
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     useEffect(() => {
         getSession().then((session) => {
             if (!session) {
@@ -44,7 +49,7 @@ const ReserveRegisterPage = (props: Props) => {
         });
     });
 
-    const title = getString(locale, strings.label.reserve_title);
+    const title = getString(lang, strings.label.reserve_title);
     return (
         <>
             <Head>
@@ -52,9 +57,7 @@ const ReserveRegisterPage = (props: Props) => {
             </Head>
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
-                <TitleText sx={{ fontSize: 20 }}>
-                    {getString(locale, strings.label.reserve_title)}
-                </TitleText>
+                <TitleText sx={{ fontSize: 20 }}>{title}</TitleText>
                 <SearchSchedule schedules={props.schedules} />
                 {/* <RegisterSchedule /> */}
             </Container>

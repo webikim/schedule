@@ -1,11 +1,13 @@
 import { TypeScriptConfig } from 'next/dist/server/config-shared';
 import React, { useContext, useEffect, useState } from 'react';
 import LeftMenuItem from './LeftMenuItem';
-import { menus } from '../../data/menus';
+import { menus as enmenus } from '../../data/menus.en';
+import { menus as krmenus } from '../../data/menus.kr';
 import * as MUIcon from '@mui/icons-material';
 import MenuContext from '../../store/menuContext';
 import { useRouter } from 'next/router';
 import { APPBAR_OPEN } from '../layout/TopBar';
+import LocaleContext from '../../store/localeContext';
 
 const toIconType = (name: string) => {
     return name as keyof typeof MUIcon;
@@ -20,6 +22,11 @@ const LeftMenu = (props: Props) => {
     const position = menuCtx.navigation?.position;
     const [left, setLeft] = useState(position?.left);
     const router = useRouter();
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
+    const menus = lang === 'kr' ? krmenus : enmenus;
 
     useEffect(() => {
         if (position && position.left !== left) {

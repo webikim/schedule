@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import ScheduleList from '../../../components/schedule/ScheduleList';
 import { getScheduleList } from '../../../lib/dao/schedule-dao';
 import { connectMongo } from '../../../lib/mongo-helper';
@@ -13,6 +13,7 @@ import { getString } from '../../../components/locale/stringUtil';
 import { ScheduleShort } from '../../reserve/register';
 import dayjs from 'dayjs';
 import { filetrPathName } from '../../../components/menu/menuUtil';
+import LocaleContext from '../../../store/localeContext';
 
 const locale = 'en';
 
@@ -44,6 +45,10 @@ interface Props {
 const ScheduleStatusPage = (props: Props) => {
     const { schedules } = props;
     const router = useRouter();
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     useEffect(() => {
         getSession().then((session) => {
             if (!session) {
@@ -74,7 +79,7 @@ const ScheduleStatusPage = (props: Props) => {
         console.log(filetrPathName(router.pathname));
     };
 
-    const title = getString(locale, strings.label.statue_title);
+    const title = getString(lang, strings.label.statue_title);
     return (
         <>
             <Head>
@@ -83,15 +88,12 @@ const ScheduleStatusPage = (props: Props) => {
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
                 <TitleText>
-                    {getString(locale, strings.label.statue_title)}
+                    {getString(lang, strings.label.statue_title)}
                 </TitleText>
                 <ScheduleList
                     schedules={schedules}
                     onClick={handleClickSchedule}
-                    emptymessage={getString(
-                        locale,
-                        strings.message.no_schedule
-                    )}
+                    emptymessage={getString(lang, strings.message.no_schedule)}
                 />
 
                 {/* <ScheduleStatus {...scheduleConfig} date={new Date()} /> */}

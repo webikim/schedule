@@ -1,4 +1,4 @@
-import { menus } from '../../data/menus';
+import { menus } from '../../data/menus.en';
 
 export const filetrPathName = (pathName: string) => {
     if (pathName) {

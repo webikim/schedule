@@ -25,11 +25,9 @@ interface Props {
 const SearchSchedule = (props: Props) => {
     const { schedules } = props;
     const router = useRouter();
-    console.log('... schedule1 = ', props.schedules);
     const handleClickSchedule =
         (index: number) => (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            console.log('item clicked');
             router.replace(
                 '/reserve/register/' +
                     schedules[index].id +

@@ -3,9 +3,12 @@ import {
     Button,
     Checkbox,
     Container,
+    FormControl,
     FormControlLabel,
     Grid,
     Link,
+    Radio,
+    RadioGroup,
     TextField,
     Typography,
 } from '@mui/material';
@@ -15,6 +18,7 @@ import NotificationContext from '../../store/notification-context';
 import { useRouter } from 'next/router';
 
 import { getString } from '../locale/stringUtil';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -59,6 +63,7 @@ interface Props {
 
 const SignIn = (props: Props) => {
     const notificationCtx = useContext(NotificationContext);
+    const localeCtx = useContext(LocaleContext);
     const router = useRouter();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -89,6 +94,13 @@ const SignIn = (props: Props) => {
             message: getString(locale, strings.message.login_success),
             status: 'success',
         });
+    };
+
+    const handleChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        value: string
+    ) => {
+        localeCtx.setLocale({ lang: value });
     };
 
     return (
@@ -164,6 +176,26 @@ const SignIn = (props: Props) => {
                                 </Link>
                             </Grid>
                         </Grid>
+                        <FormControl>
+                            <RadioGroup
+                                row
+                                aria-labelledby="language"
+                                name="lang"
+                                defaultValue={'en'}
+                                onChange={handleChange}
+                            >
+                                <FormControlLabel
+                                    value="en"
+                                    control={<Radio />}
+                                    label="English"
+                                />
+                                <FormControlLabel
+                                    value="kr"
+                                    control={<Radio />}
+                                    label="한글"
+                                />
+                            </RadioGroup>
+                        </FormControl>
                     </Box>
                 </Box>
             </Container>

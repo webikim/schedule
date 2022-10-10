@@ -5,7 +5,14 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
-import { Children } from 'react';
+import {
+    Children,
+    JSXElementConstructor,
+    ReactElement,
+    ReactFragment,
+    ReactPortal,
+    useContext,
+} from 'react';
 import dayjs from 'dayjs';
 import Hours, { selectWithDate } from './Hours';
 import DateNavigator from './DateNavigator';
@@ -13,6 +20,7 @@ import DateNavigator from './DateNavigator';
 import { getString } from '../locale/stringUtil';
 import { CenteredText } from '../theme/styles';
 import { Reserve } from '../../lib/dao/reserve-dao';
+import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -37,7 +45,9 @@ class WeekData {
     }
 }
 
-const WeekString = {
+const WeekString: {
+    [x: string]: string[];
+} = {
     en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     kr: ['일', '월', '화', '수', '목', '금', '토'],
 };
@@ -58,12 +68,12 @@ const HCenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-const getWeekData = (date: Date) => {
+const getWeekData = (lang: string, date: Date) => {
     const refDate = new Date(date);
     // refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
     refDate.setDate(refDate.getDate() - 1);
 
-    const weekData = WeekString[locale].map((each, index: number) => {
+    const weekData = WeekString[lang].map((each, index: number) => {
         refDate.setDate(refDate.getDate() + 1);
         // return new WeekData(index, new Date(refDate));
         return new WeekData(refDate.getDay(), new Date(refDate));
@@ -71,15 +81,13 @@ const getWeekData = (date: Date) => {
     return weekData;
 };
 
-const renderWeekHeader = (weekData: WeekData[]) => {
+const renderWeekHeader = (lang: string, weekData: WeekData[]) => {
     const weekHeader: JSX.Element[] = [];
     weekData.map((each, index) => {
         weekHeader.push(
             <Grid item xs={1.7}>
                 <WeekName sx={{ paddingTop: '0.5em' }}>
-                    <HCenteredText>
-                        {WeekString[locale][each.day]}
-                    </HCenteredText>
+                    <HCenteredText>{WeekString[lang][each.day]}</HCenteredText>
                     <HCenteredText>{each.date.getDate()}</HCenteredText>
                 </WeekName>
             </Grid>
@@ -121,7 +129,11 @@ interface Props {
 const WeekView = (props: Props) => {
     const { start, end, slotsPerHour, date, onClick } = props;
     // const [date, setDate] = useState(props.date);
-    const weekData = getWeekData(date);
+
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
+    const weekData = getWeekData(lang, date);
 
     const handleClickSlot = (data: WeekData) => (hour: number, min: number) => {
         onClick(
@@ -170,9 +182,9 @@ const WeekView = (props: Props) => {
                     backgroundColor: 'lightgray',
                 }}
             >
-                {getString(locale, strings.message.select_time)}
+                {getString(lang, strings.message.select_time)}
             </Typography>
-            <Grid container>{renderWeekHeader(weekData)}</Grid>
+            <Grid container>{renderWeekHeader(lang, weekData)}</Grid>
             <Grid container>{renderSeperator(weekData)}</Grid>
             <Grid container>{Children.toArray(schedules)}</Grid>
             {/* <Grid container>{renderWeeklySchedule(props, weekData)}</Grid> */}

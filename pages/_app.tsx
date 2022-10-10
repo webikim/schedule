@@ -5,15 +5,18 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { Session } from 'next-auth';
 import { MenuContextProvider } from '../store/menuContext';
+import { LocaleContextProvider } from '../store/localeContext';
 
 function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
     return (
         <SessionProvider session={pageProps.session}>
             <NotificationContextProvider>
                 <MenuContextProvider>
-                    <Layout>
-                        <Component {...pageProps} />
-                    </Layout>
+                    <LocaleContextProvider>
+                        <Layout>
+                            <Component {...pageProps} />
+                        </Layout>
+                    </LocaleContextProvider>
                 </MenuContextProvider>
             </NotificationContextProvider>
         </SessionProvider>

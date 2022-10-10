@@ -7,8 +7,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         case 'PATCH':
             if (req.query.id && req.body) {
                 const client = await connectMongo();
-                console.log('id = ', req.query.id);
-                console.log('body = ', req.body);
                 const response = await updateUser(client, {
                     email: req.query.id as string,
                     password: '',
