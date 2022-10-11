@@ -166,9 +166,16 @@ const renderSlots = (
     data.slots.map((each, index) => {
         let timeslot;
         timeslot = (
-            <SlotText onClick={onClickSlot(data.hour, each, true)}>
-                {convertHour(data.hour)}:{formatter.format(each)}
-            </SlotText>
+            <>
+                {(ampmType === 1 ||
+                    ((isFirst || data.hour === 12) && index === 0)) && (
+                    <AMPM>{getAMPM(data.hour)}</AMPM>
+                )}
+
+                <SlotText onClick={onClickSlot(data.hour, each, true)}>
+                    {convertHour(data.hour)}:{formatter.format(each)}
+                </SlotText>
+            </>
         );
         if (reserved && reserved.length) {
             const list = timeInReserved(
@@ -180,17 +187,33 @@ const renderSlots = (
             if (list.length > 0 && email) {
                 if (emailInReserved(list, email).length > 0) {
                     timeslot = (
-                        <SlotTextReserved
-                            onClick={onClickSlot(data.hour, each, false)}
-                        >
-                            {convertHour(data.hour)}:{formatter.format(each)}
-                        </SlotTextReserved>
+                        <>
+                            {(ampmType === 1 ||
+                                ((isFirst || data.hour === 12) &&
+                                    index === 0)) && (
+                                <AMPM>{getAMPM(data.hour)}</AMPM>
+                            )}
+                            <SlotTextReserved
+                                onClick={onClickSlot(data.hour, each, false)}
+                            >
+                                {convertHour(data.hour)}:
+                                {formatter.format(each)}
+                            </SlotTextReserved>
+                        </>
                     );
                 } else {
                     timeslot = (
-                        <SlotTextDisabled>
-                            {convertHour(data.hour)}:{formatter.format(each)}
-                        </SlotTextDisabled>
+                        <>
+                            {(ampmType === 1 ||
+                                ((isFirst || data.hour === 12) &&
+                                    index === 0)) && (
+                                <AMPM>{getAMPM(data.hour)}</AMPM>
+                            )}
+                            <SlotTextDisabled>
+                                {convertHour(data.hour)}:
+                                {formatter.format(each)}
+                            </SlotTextDisabled>
+                        </>
                     );
                 }
             }

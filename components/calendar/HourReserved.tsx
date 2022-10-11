@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React, { Children, useContext } from 'react';
 import {
     Box,
     BoxProps,
@@ -18,10 +18,24 @@ import {
     setSlots,
     timeInReserved,
 } from './Hours';
-import { Reserve } from '../../lib/dao/reserve-dao';
 import { ReserveWname } from '../../pages/schedule/status/[...arg]';
 import { Schedule } from '../../lib/dao/schedule-dao';
+import LocaleContext from '../../store/localeContext';
 import dayjs from 'dayjs';
+
+import { getString } from '../../components/locale/stringUtil';
+
+const locale = 'en';
+
+const strings = {
+    message: {
+        out_of_scope: {
+            en: 'You are out of the scope of your schedule.',
+            kr: '예약으로 설정된 범위가 아닙니다.',
+        },
+    },
+    label: {},
+};
 
 interface SlotTextProps extends TypographyProps {
     index: number;
@@ -142,6 +156,9 @@ const HoursReserved = (props: Props) => {
     const start = dayjs(props.schedule.timefrom).hour();
     const end = dayjs(props.schedule.timeto).hour();
 
+    const localeCtx = useContext(LocaleContext);
+    const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
+
     const hourData = getHours(start, end, props.schedule.slots);
     setSlots(hourData, props.schedule.slots);
 
@@ -158,7 +175,7 @@ const HoursReserved = (props: Props) => {
             <>
                 <Box sx={{ marginTop: 3 }}>
                     <CenteredText>
-                        You are out of the scope of your schedule.
+                        {getString(lang, strings.message.out_of_scope)}
                     </CenteredText>
                 </Box>
             </>

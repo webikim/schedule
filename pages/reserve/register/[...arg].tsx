@@ -18,10 +18,10 @@ import {
     slot2Minutes,
 } from '../../../components/calendar/Hours';
 import WeekView from '../../../components/calendar/WeekView';
-
-import { getString } from '../../../components/locale/stringUtil';
 import LocaleContext from '../../../store/localeContext';
 import AlertBox from '../../../components/layout/AlertBox';
+
+import { getString } from '../../../components/locale/stringUtil';
 
 const locale = 'en';
 

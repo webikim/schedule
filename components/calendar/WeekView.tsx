@@ -2,8 +2,10 @@ import {
     Grid,
     GridProps,
     styled,
+    Theme,
     Typography,
     TypographyProps,
+    useTheme,
 } from '@mui/material';
 import { Children, useContext } from 'react';
 import dayjs from 'dayjs';
@@ -73,11 +75,14 @@ const getWeekData = (lang: string, date: Date) => {
     return weekData;
 };
 
-const renderWeekHeader = (lang: string, weekData: WeekData[]) => {
+const renderWeekHeader = (lang: string, theme: Theme, weekData: WeekData[]) => {
     const weekHeader: JSX.Element[] = [];
     weekData.map((each, index) => {
+        const style = !each.day
+            ? { sx: { backgroundColor: theme.palette.warning.light } }
+            : {};
         weekHeader.push(
-            <Grid item xs={1.7}>
+            <Grid item xs={1.7} {...style}>
                 <WeekName sx={{ paddingTop: '0.5em' }}>
                     <HCenteredText>{WeekString[lang][each.day]}</HCenteredText>
                     <HCenteredText>{each.date.getDate()}</HCenteredText>
@@ -107,6 +112,7 @@ interface Props {
 
 const WeekView = (props: Props) => {
     const { date, onClickAdd, onClickDelete } = props;
+    const theme = useTheme();
 
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
@@ -172,7 +178,7 @@ const WeekView = (props: Props) => {
             >
                 {getString(lang, strings.message.select_time)}
             </Typography>
-            <Grid container>{renderWeekHeader(lang, weekData)}</Grid>
+            <Grid container>{renderWeekHeader(lang, theme, weekData)}</Grid>
             <Grid container>{renderSeperator(weekData)}</Grid>
             <Grid container>{Children.toArray(schedules)}</Grid>
             {/* <Grid container>{renderWeeklySchedule(props, weekData)}</Grid> */}
