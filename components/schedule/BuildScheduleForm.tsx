@@ -1,9 +1,11 @@
 import {
+    Avatar,
     Box,
     Button,
     FormControl,
     FormControlLabel,
     FormLabel,
+    IconButton,
     Radio,
     RadioGroup,
     styled,
@@ -11,17 +13,25 @@ import {
     TextFieldProps,
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
-import React, { Dispatch, useContext, useState } from 'react';
+import React, {
+    createRef,
+    Dispatch,
+    useContext,
+    useRef,
+    useState,
+} from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+
 import { Schedule } from '../../lib/dao/schedule-dao';
+import LocaleContext from '../../store/localeContext';
 
 import { getString } from '../locale/stringUtil';
-import LocaleContext from '../../store/localeContext';
 
 const locale = 'en';
 
@@ -91,7 +101,8 @@ interface Props {
 
 const BuildScheduleForm = (props: Props) => {
     const { schedule } = props;
-
+    const filePickerRef = useRef<HTMLInputElement>(null);
+    const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(null);
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
 
@@ -116,6 +127,17 @@ const BuildScheduleForm = (props: Props) => {
             : dayjs(new Date('2000-01-01T22:00:00'))
     );
     const { data } = useSession();
+
+    const handleChangeAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(event);
+        const reader = new FileReader();
+        if (event.target.files && event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        reader.onload = (readerEvent) => {
+            setAvatar(readerEvent.target!.result);
+        };
+    };
 
     const handleChange =
         (setter: Dispatch<React.SetStateAction<Dayjs>>) =>
@@ -158,6 +180,34 @@ const BuildScheduleForm = (props: Props) => {
                         noValidate
                         sx={{ mt: 1 }}
                     >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <IconButton component="label">
+                                <input
+                                    type="file"
+                                    accept="image/png, image/jpeg"
+                                    hidden
+                                    onChange={handleChangeAvatar}
+                                />
+                                {avatar ? (
+                                    <Avatar
+                                        src={avatar as string}
+                                        sx={{ width: '3em', height: '3em' }}
+                                    />
+                                ) : (
+                                    <Avatar
+                                        sx={{ width: '3em', height: '3em' }}
+                                    >
+                                        <CalendarTodayIcon />
+                                    </Avatar>
+                                )}
+                            </IconButton>
+                        </Box>
                         <InputField
                             required
                             fullWidth

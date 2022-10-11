@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
-import { TitleText } from '../../components/theme/styles';
+import { CenteredText, TitleText } from '../../components/theme/styles';
 import { Schedule } from '../../lib/dao/schedule-dao';
 import { getString } from '../../components/locale/stringUtil';
 import NotificationContext from '../../store/notification-context';
@@ -81,10 +81,10 @@ const CreateSchedulePage = (props: Props) => {
             </Head>
 
             <Container maxWidth="xs" sx={{ marginTop: 5 }}>
-                <TitleText sx={{ fontSize: 20 }}>
+                <CenteredText sx={{ fontSize: 20, fontWeight: '700' }}>
                     {getString(lang, strings.label.new_schedule)}
-                </TitleText>
-                <BuildScheduleForm onSubmit={handleSubmit} />;
+                </CenteredText>
+                <BuildScheduleForm onSubmit={handleSubmit} />
             </Container>
         </>
     );
