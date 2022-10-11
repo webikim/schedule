@@ -54,9 +54,7 @@ export const getServerSideProps = async (
     const session = await getSession({ req: context.req });
     if (session) {
         const client = await connectMongo();
-        console.log('user = ', session.user);
         const dbuser = await getUserByEmail(client, session.user!.email!);
-        console.log('dbuser = ', dbuser);
         if (dbuser) {
             return {
                 props: {

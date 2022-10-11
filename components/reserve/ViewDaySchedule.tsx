@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { Children } from 'react';
-import { ReserveWname } from '../../pages/reserve/status';
+import { ReserveWtitle } from '../../pages/reserve/status';
 import DateNavigator from '../calendar/DateNavigator';
 import { convertHour, getAMPM } from '../calendar/Hours';
 import { filetrPathName } from '../menu/menuUtil';
@@ -27,7 +27,7 @@ const AMPM = styled(Typography)<TypographyProps>(({ theme }) => ({
     height: '1.3em',
 }));
 
-const renderSchedule = (reserved: ReserveWname[]) => {
+const renderSchedule = (reserved: ReserveWtitle[]) => {
     let list: JSX.Element[] = [];
     reserved.map((each) => {
         const datefrom = dayjs(each.df);
@@ -49,7 +49,7 @@ const renderSchedule = (reserved: ReserveWname[]) => {
 };
 
 interface Props {
-    reserved: ReserveWname[];
+    reserved: ReserveWtitle[];
     date: Date;
 }
 

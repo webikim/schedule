@@ -8,6 +8,7 @@ import LeftMenu from '../menu/LeftMenu';
 import { useRouter } from 'next/router';
 import MenuContext from '../../store/menuContext';
 import { buildNavigation } from '../menu/menuUtil';
+import AlertBox from './AlertBox';
 
 const drawerWidth = 240;
 const drawerHeader = '69px';

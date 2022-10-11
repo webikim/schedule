@@ -32,9 +32,13 @@ const strings = {
     },
 };
 
+export interface ReserveWname extends Reserve {
+    name: string;
+}
+
 interface Props {
     schedule: Schedule;
-    reserved: Reserve[];
+    reserved: ReserveWname[];
     date: string;
     routeback: string;
 }

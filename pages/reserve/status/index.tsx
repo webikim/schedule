@@ -5,13 +5,12 @@ import { useRouter } from 'next/router';
 import { getSession, useSession } from 'next-auth/react';
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
-import ViewSchedule from '../../../components/reserve/ViewSchedule';
 import { TitleText } from '../../../components/theme/styles';
 import { connectMongo } from '../../../lib/mongo-helper';
 import { getDayReserveByUser, Reserve } from '../../../lib/dao/reserve-dao';
+import ViewDaySchedule from '../../../components/reserve/ViewDaySchedule';
 
 import { getString } from '../../../components/locale/stringUtil';
-import ViewDaySchedule from '../../../components/reserve/ViewDaySchedule';
 
 const locale = 'en';
 
@@ -20,17 +19,16 @@ const strings = {
     label: {},
 };
 
-export type ReserveWname = {
+export type ReserveWtitle = {
     sch: string;
     sch_name: string;
-    em: string;
     df: string;
     dt: string;
     nt: string;
 };
 
 interface Props {
-    reserved: ReserveWname[];
+    reserved: ReserveWtitle[];
     date: string;
 }
 

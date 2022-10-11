@@ -20,7 +20,7 @@ const locale = 'en';
 const strings = {
     message: {},
     label: {
-        profile_title: {
+        password_title: {
             en: 'Change Password',
             kr: '암호 변경',
         },
@@ -71,7 +71,9 @@ const Password = (props: Props) => {
     return (
         <>
             <Container component="main" maxWidth="xs">
-                <CenteredText sx={{ fontSize: 20 }}>암호 변경</CenteredText>
+                <CenteredText sx={{ fontSize: 20 }}>
+                    {getString(lang, strings.label.password_title)}
+                </CenteredText>
                 <Box
                     sx={{
                         display: 'flex',

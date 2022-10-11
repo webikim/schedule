@@ -122,12 +122,13 @@ interface Props {
     slotsPerHour: number;
     date: Date;
     reserved: Reserve[];
-    onClick: (date: Date) => void;
+    onClickAdd: (date: Date) => void;
+    onClickDelete: (date: Date) => void;
     onClickNavi: (date: Date) => void;
 }
 
 const WeekView = (props: Props) => {
-    const { start, end, slotsPerHour, date, onClick } = props;
+    const { start, end, slotsPerHour, date, onClickAdd, onClickDelete } = props;
     // const [date, setDate] = useState(props.date);
 
     const localeCtx = useContext(LocaleContext);
@@ -135,16 +136,28 @@ const WeekView = (props: Props) => {
 
     const weekData = getWeekData(lang, date);
 
-    const handleClickSlot = (data: WeekData) => (hour: number, min: number) => {
-        onClick(
-            dayjs(data.date)
-                .hour(hour)
-                .minute(min)
-                .second(0)
-                .millisecond(0)
-                .toDate()
-        );
-    };
+    const handleClickSlot =
+        (data: WeekData) => (hour: number, min: number, isAdd: boolean) => {
+            if (isAdd) {
+                onClickAdd(
+                    dayjs(data.date)
+                        .hour(hour)
+                        .minute(min)
+                        .second(0)
+                        .millisecond(0)
+                        .toDate()
+                );
+            } else {
+                onClickDelete(
+                    dayjs(data.date)
+                        .hour(hour)
+                        .minute(min)
+                        .second(0)
+                        .millisecond(0)
+                        .toDate()
+                );
+            }
+        };
 
     // console.log('... reserved 2 = ', props.reserved);
 

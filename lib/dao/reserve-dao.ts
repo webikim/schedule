@@ -28,19 +28,35 @@ export const putReserve = async (client: MongoClient, reserve: Reserve) => {
 export const getReserve = async (client: MongoClient, id: string, datefrom: Date, dateto: Date) => {
     const db = client.db(MONGODB_DB);
     const col = db.collection(RESERVE_COLLECTION);
-    const rawlist = await col.find({
-        $and: [{ sch: { $eq: id } },
-        { df: { $gte: datefrom } },
-        { dt: { $lt: dateto } }]
-    }, { projection: { _id: 0 } }
-    ).toArray();
+
+    const rawlist = await col.aggregate([
+        {
+            $lookup: {
+                from: "user",
+                localField: "em",
+                foreignField: "email",
+                as: "user"
+            }
+        },
+        {
+            $match: {
+                $and: [{ sch: { $eq: id } },
+                { df: { $gte: datefrom } },
+                { dt: { $lt: dateto } }]
+
+            }
+        },
+        { $project: { sch: 1, em: 1, df: 1, dt: 1, nt: 1, fullname: "$user.fullname" } },
+    ]).toArray();
+
     return rawlist.map((each) => {
         return {
             sch: each.sch,
             em: each.em,
             df: each.df.toISOString(),
             dt: each.dt.toISOString(),
-            nt: each.nt || null
+            nt: each.nt || null,
+            name: each.fullname[0]
         }
     })
 }
@@ -77,13 +93,12 @@ export const getReserveByUser = async (client: MongoClient, email: string, datef
                 { dt: { $lt: dateto } }]
             }
         },
-        { "$project": { "sch": { "$toObjectId": "$sch" }, "em": 1, "df": 1, "dt": 1, "nt": 1, "sch_name": "$schedule.title" } },
+        { "$project": { sch: 1, "df": 1, "dt": 1, "nt": 1, "sch_name": "$schedule.title" } },
     ]).toArray();
     return rawlist.map((each) => {
         return {
             sch: each.sch.toString(),
-            sch_name: each.sch_name[0],
-            em: each.em,
+            sch_name: each.sch_name[0] || null,
             df: each.df.toISOString(),
             dt: each.dt.toISOString(),
             nt: each.nt || null
@@ -95,4 +110,14 @@ export const getDayReserveByUser = (client: MongoClient, email: string, date: Da
     const dateto = new Date(date);
     dateto.setDate(dateto.getDate() + 1);
     return getReserveByUser(client, email, date, dateto);
+}
+
+export const deleteReserve = async (client: MongoClient, email: string, sch: string, df: Date) => {
+    const db = client.db(MONGODB_DB);
+    const col = db.collection(RESERVE_COLLECTION);
+    return await col.deleteOne({
+        $and: [{ em: { $eq: email } },
+        { sch: { $eq: sch } },
+        { df: { $eq: df } }]
+    });
 }

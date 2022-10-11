@@ -6,10 +6,10 @@ import { getHours, HourInDay, setSlots } from '../calendar/Hours';
 import DateNavigator from '../calendar/DateNavigator';
 import { CenteredText } from '../theme/styles';
 import HoursReserved from '../calendar/HourReserved';
-import { Reserve } from '../../lib/dao/reserve-dao';
 import LocaleContext from '../../store/localeContext';
 
 import { getString } from '../locale/stringUtil';
+import { ReserveWname } from '../../pages/schedule/status/[...arg]';
 
 const locale = 'en';
 
@@ -65,7 +65,7 @@ interface Props {
     end: number;
     slotsPerHour: number;
     date: Date;
-    reserved: Reserve[];
+    reserved: ReserveWname[];
     onClick: () => void;
     onClickNavi: (date: Date) => void;
 }

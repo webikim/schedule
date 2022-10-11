@@ -19,6 +19,7 @@ import {
     timeInReserved,
 } from './Hours';
 import { Reserve } from '../../lib/dao/reserve-dao';
+import { ReserveWname } from '../../pages/schedule/status/[...arg]';
 
 interface SlotTextProps extends TypographyProps {
     index: number;
@@ -30,14 +31,12 @@ export const SlotText = styled(Typography)<SlotTextProps>(
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '1.3em',
         borderTop: index === 0 ? 'lightgray 1px solid' : undefined,
     })
 );
 
 const AMPM = styled(Typography)<TypographyProps>(({ theme }) => ({
     color: theme.palette.warning.light,
-    height: '1.3em',
 }));
 
 interface FillerProps extends BoxProps {
@@ -45,7 +44,6 @@ interface FillerProps extends BoxProps {
 }
 
 const Filler = styled(Box)<FillerProps>(({ theme, index }) => ({
-    height: '1.3em',
     borderTop: index === 0 ? 'lightgray 1px solid' : undefined,
 }));
 
@@ -67,18 +65,24 @@ const renderReserved = (
     date: Date,
     hour: number,
     min: number,
-    reserved: Reserve[]
+    reserved: ReserveWname[]
 ) => {
     const selected = timeInReserved(date, reserved, hour, min);
-    return selected.length ? (
-        <>
-            <Typography sx={{ paddingLeft: 1 }}>
-                {selected.map((each) => each.em)}
-            </Typography>
-        </>
-    ) : (
-        <></>
-    );
+    if (selected.length) {
+        const list: JSX.Element[] = [];
+        selected.map((each) => {
+            list.push(
+                <>
+                    <Typography sx={{ paddingLeft: 1 }}>
+                        {(each as ReserveWname).name}
+                    </Typography>
+                    <Typography>{'(' + each.em + ')'}</Typography>{' '}
+                </>
+            );
+        });
+        return <Box sx={{ display: 'flex' }}>{Children.toArray(list)}</Box>;
+    }
+    return <></>;
 };
 
 const renderSlots = (
@@ -87,7 +91,7 @@ const renderSlots = (
     isFirst: boolean,
     drawBorder: boolean,
     ampmType: number, // 0 : off, 1 : all ways, 2: first and 12:00
-    reserved: Reserve[]
+    reserved: ReserveWname[]
 ) => {
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
@@ -107,7 +111,7 @@ const renderSlots = (
                     <Grid item xs={10.5}>
                         {(ampmType === 1 ||
                             ((isFirst || data.hour === 12) && index === 0)) && (
-                            <Filler index={1}> </Filler>
+                            <Filler index={1}>&nbsp;</Filler>
                         )}
                         <Filler index={index}>
                             {renderReserved(date, data.hour, each, reserved)}
@@ -130,7 +134,7 @@ interface Props {
     end: number;
     slotsPerHour: number;
     onClick: (hour: number, min: number) => void;
-    reserved: Reserve[];
+    reserved: ReserveWname[];
 }
 
 const HoursReserved = (props: Props) => {

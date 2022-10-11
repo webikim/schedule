@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 
 import { CenteredText } from '../theme/styles';
 import { Reserve } from '../../lib/dao/reserve-dao';
+import { useSession } from 'next-auth/react';
 
 export class HourInDay {
     hour: number;
@@ -50,6 +51,16 @@ const SlotText = styled(SlotTextBase)<TypographyProps>(({ theme }) => ({
     },
 }));
 
+const SlotTextReserved = styled(SlotTextBase)<TypographyProps>(({ theme }) => ({
+    '&:hover': {
+        cursor: 'pointer',
+        textDecoration: 'underline',
+        textDecorationColor: 'gray',
+        fontWeight: 700,
+    },
+    color: theme.palette.error.light,
+}));
+
 const SlotTextDisabled = styled(SlotTextBase)<TypographyProps>(({ theme }) => ({
     color: 'lightgray',
 }));
@@ -74,23 +85,24 @@ export const getHours = (start: number, end: number, slots: number = 0) => {
 };
 
 export const convertReserved = (reserved: Reserve[]) => {
-    return reserved.map((each) => {
-        return {
-            ...each,
-            df: typeof each.df === 'string' ? new Date(each.df) : each.df,
-            dt: typeof each.dt === 'string' ? new Date(each.dt) : each.dt,
-        };
-    });
+    if (reserved && reserved.length > 0) {
+        return reserved.map((each) => {
+            return {
+                ...each,
+                df: typeof each.df === 'string' ? new Date(each.df) : each.df,
+                dt: typeof each.dt === 'string' ? new Date(each.dt) : each.dt,
+            };
+        });
+    } else return reserved;
 };
 
 export const selectWithDate = (reserved: Reserve[], date: Date) => {
-    return reserved.filter((each) => {
-        return (
+    return reserved.filter(
+        (each) =>
             each.df.getTime() >= date.getTime() &&
             each.dt.getTime() <=
                 dayjs(date).hour(23).minute(59).second(59).valueOf()
-        );
-    });
+    );
 };
 
 export const renderHourTitles = (hourData: HourInDay[]) => {
@@ -135,37 +147,53 @@ export const timeInReserved = (
     });
 };
 
+export const emailInReserved = (reserved: Reserve[], email: string) => {
+    return reserved.filter((each) => each.em === email);
+};
+
 const renderSlots = (
+    email: string | undefined,
     date: Date,
     data: HourInDay,
     isFirst: boolean,
     ampmType: number, // 0 : off, 1 : all ways, 2: first and 12:00
-    onClickSlot: (hour: number, min: number) => () => void,
+    onClickSlot: (hour: number, min: number, isAdd: boolean) => () => void,
     reserved: Reserve[]
 ) => {
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
     data.slots.map((each, index) => {
-        slots.push(
-            <>
-                {(ampmType === AMPM_ALWAYS ||
-                    (ampmType &&
-                        (isFirst || data.hour === 12) &&
-                        index === 0)) && <AMPM>{getAMPM(data.hour)}</AMPM>}
-                {reserved &&
-                reserved.length > 0 &&
-                timeInReserved(date, reserved, data.hour, data.slots[index])
-                    .length > 0 ? (
-                    <SlotTextDisabled onClick={onClickSlot(data.hour, each)}>
-                        {convertHour(data.hour)}:{formatter.format(each)}
-                    </SlotTextDisabled>
-                ) : (
-                    <SlotText onClick={onClickSlot(data.hour, each)}>
-                        {convertHour(data.hour)}:{formatter.format(each)}
-                    </SlotText>
-                )}
-            </>
+        let timeslot = (
+            <SlotText onClick={onClickSlot(data.hour, each, true)}>
+                {convertHour(data.hour)}:{formatter.format(each)}
+            </SlotText>
         );
+        if (reserved && reserved.length) {
+            const list = timeInReserved(
+                date,
+                reserved,
+                data.hour,
+                data.slots[index]
+            );
+            if (list.length > 0 && email) {
+                if (emailInReserved(list, email).length > 0) {
+                    timeslot = (
+                        <SlotTextReserved
+                            onClick={onClickSlot(data.hour, each, false)}
+                        >
+                            {convertHour(data.hour)}:{formatter.format(each)}
+                        </SlotTextReserved>
+                    );
+                } else {
+                    timeslot = (
+                        <SlotTextDisabled>
+                            {convertHour(data.hour)}:{formatter.format(each)}
+                        </SlotTextDisabled>
+                    );
+                }
+            }
+        }
+        slots.push(timeslot);
     });
     return (
         <>
@@ -179,7 +207,7 @@ interface Props {
     start: number;
     end: number;
     slotsPerHour: number;
-    onClick: (hour: number, min: number) => void;
+    onClick: (hour: number, min: number, isAdd: boolean) => void;
     reserved: Reserve[];
 }
 
@@ -187,14 +215,20 @@ const Hours = (props: Props) => {
     const hourData = getHours(props.start, props.end, props.slotsPerHour);
     setSlots(hourData, props.slotsPerHour);
 
-    const handleClickSlot = (hour: number, min: number) => () => {
-        props.onClick(hour, min);
-    };
+    const session = useSession();
+
+    const handleClickSlot =
+        (hour: number, min: number, isAdd: boolean) => () => {
+            props.onClick(hour, min, isAdd);
+        };
 
     const hourNslots: JSX.Element[] = [];
     hourData.map((data: HourInDay, index) => {
         hourNslots.push(
             renderSlots(
+                session && session.data
+                    ? session.data!.user!.email!
+                    : undefined,
                 props.date,
                 data,
                 index === 0,

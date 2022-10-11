@@ -21,6 +21,7 @@ import WeekView from '../../../components/calendar/WeekView';
 
 import { getString } from '../../../components/locale/stringUtil';
 import LocaleContext from '../../../store/localeContext';
+import AlertBox from '../../../components/layout/AlertBox';
 
 const locale = 'en';
 
@@ -28,11 +29,22 @@ const strings = {
     message: {
         register_success: {
             en: 'Sucessfully Reserved.',
-            ko: '예약 되었습다.',
+            ko: '예약 되었습니다.',
         },
         register_failed: {
             en: 'Could not Reserve this time.',
             ko: '예약이 되지 않았습니다.',
+        },
+        cancel_success: {
+            en: 'Sucessfully Canceled.',
+            ko: '취소 되었습다.',
+        },
+        cancel_failed: {
+            en: 'Could not Cancel.',
+            ko: '취소가 되지 않았습니다.',
+        },
+        ask_cancel: {
+            en: 'Do you really want to cancel ?',
         },
     },
     label: {
@@ -43,6 +55,14 @@ const strings = {
         to_list: {
             en: 'to list',
             kr: '목록화면으로',
+        },
+        yes: {
+            en: 'Yes',
+            kr: '예',
+        },
+        no: {
+            en: 'No',
+            kr: '아니오',
         },
     },
 };
@@ -55,22 +75,29 @@ interface Props {
 }
 
 const DayRegisterPage = (props: Props) => {
+    const [alert, setAlert] = useState(false);
+    const [candidate, setCandidate] = useState<Date | null>(null);
     const [reserved, setReserved] = useState<Reserve[]>(
         convertReserved(props.reserved)
     );
     useEffect(() => {
+        getSession().then((session) => {
+            if (!session) {
+                router.replace('/auth');
+            }
+        });
         setReserved(convertReserved(props.reserved));
     }, [props.reserved]);
     const notificationCtx = useContext(NotificationContext);
     const session = useSession();
     const router = useRouter();
-    const { timefrom, timeto, slots } = props.schedule;
 
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
 
     const title =
-        getString(lang, strings.label.register_title) + props.schedule.title;
+        getString(lang, strings.label.register_title) +
+        (props.schedule && props.schedule.title);
 
     const addToReserved = (email: string, date: Date) => {
         setReserved([
@@ -84,7 +111,23 @@ const DayRegisterPage = (props: Props) => {
         ]);
     };
 
-    const handleClickTime = async (date: Date) => {
+    const removeReserved = (email: string, date: Date) => {
+        let pnt = -1;
+        reserved.map((each, index) => {
+            if (
+                each.em === email &&
+                each.sch === props.schedule.id &&
+                dayjs(each.df).valueOf() === dayjs(date).valueOf()
+            ) {
+                pnt = index;
+            }
+        });
+        if (pnt !== -1) {
+            setReserved(reserved.filter((each, index) => index !== pnt));
+        }
+    };
+
+    const handleClickAdd = async (date: Date) => {
         const reserve: Reserve = {
             sch: props.schedule.id!,
             em: session.data!.user!.email!,
@@ -114,6 +157,43 @@ const DayRegisterPage = (props: Props) => {
         addToReserved(session.data!.user!.email!, date);
     };
 
+    const handleClickDelete = async (date: Date) => {
+        setCandidate(date);
+        setAlert(true);
+    };
+
+    const handleClose = (choice: number) => async () => {
+        if (choice === 0) {
+            const response = await fetch(
+                '/api/reserve?' +
+                    'em=' +
+                    session.data!.user!.email! +
+                    '&sch=' +
+                    props.schedule.id +
+                    '&df=' +
+                    candidate?.toISOString(),
+                {
+                    method: 'DELETE',
+                }
+            );
+            if (!response.ok) {
+                notificationCtx.showNotification({
+                    message: getString(lang, strings.message.cancel_failed),
+                    status: 'error',
+                });
+                console.log('Schedule create failed.');
+                setAlert(false);
+                return;
+            }
+            notificationCtx.showNotification({
+                message: getString(lang, strings.message.cancel_success),
+                status: 'success',
+            });
+            removeReserved(session.data!.user!.email!, candidate!);
+        }
+        setAlert(false);
+    };
+
     const handleNavi = (date: Date) => {
         router.replace(
             filetrPathName(router.pathname) +
@@ -132,6 +212,7 @@ const DayRegisterPage = (props: Props) => {
         );
     };
 
+    // const { timefrom, timeto, slots } = props.schedule;
     return (
         <Container maxWidth="xs" sx={{ marginTop: 1 }}>
             <Box sx={{ display: 'flex' }}>
@@ -147,16 +228,29 @@ const DayRegisterPage = (props: Props) => {
 
             <Box sx={{ marginTop: 4 }}>
                 <TitleText>{title}</TitleText>
-                <WeekView
-                    start={dayjs(timefrom).hour()}
-                    end={dayjs(timeto).hour()}
-                    slotsPerHour={slots}
-                    date={dayjs(props.date).toDate()}
-                    reserved={reserved}
-                    onClick={handleClickTime}
-                    onClickNavi={handleNavi}
-                />
+                {props.schedule && (
+                    <WeekView
+                        start={dayjs(props.schedule.timefrom).hour()}
+                        end={dayjs(props.schedule.timeto).hour()}
+                        slotsPerHour={props.schedule.slots}
+                        date={dayjs(props.date).toDate()}
+                        reserved={reserved}
+                        onClickAdd={handleClickAdd}
+                        onClickDelete={handleClickDelete}
+                        onClickNavi={handleNavi}
+                    />
+                )}
             </Box>
+            <AlertBox
+                title=""
+                answers={[
+                    getString(lang, strings.label.yes),
+                    getString(lang, strings.label.no),
+                ]}
+                content={getString(lang, strings.message.ask_cancel)}
+                open={alert}
+                onClose={handleClose}
+            ></AlertBox>
         </Container>
     );
 };
