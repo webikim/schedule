@@ -103,10 +103,8 @@ const DayScheduleStatusPage = (props: Props) => {
                     <TitleText>{title}</TitleText>
                     {props.schedule && (
                         <DayScheduleStatus
-                            start={dayjs(props.schedule.timefrom).hour()}
-                            end={dayjs(props.schedule.timeto).hour()}
-                            slotsPerHour={props.schedule.slots}
                             date={dayjs(props.date).toDate()}
+                            schedule={props.schedule}
                             reserved={props.reserved}
                             onClickNavi={handleNavi}
                             onClick={handleClickSchedule}

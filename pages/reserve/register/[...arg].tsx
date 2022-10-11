@@ -230,9 +230,7 @@ const DayRegisterPage = (props: Props) => {
                 <TitleText>{title}</TitleText>
                 {props.schedule && (
                     <WeekView
-                        start={dayjs(props.schedule.timefrom).hour()}
-                        end={dayjs(props.schedule.timeto).hour()}
-                        slotsPerHour={props.schedule.slots}
+                        schedule={props.schedule}
                         date={dayjs(props.date).toDate()}
                         reserved={reserved}
                         onClickAdd={handleClickAdd}

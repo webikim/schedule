@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { Box, BoxProps, styled, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { Children, useContext } from 'react';
-import { getHours, HourInDay, setSlots } from '../calendar/Hours';
+import { HourInDay } from '../calendar/Hours';
 import DateNavigator from '../calendar/DateNavigator';
 import { CenteredText } from '../theme/styles';
 import HoursReserved from '../calendar/HourReserved';
@@ -10,6 +10,7 @@ import LocaleContext from '../../store/localeContext';
 
 import { getString } from '../locale/stringUtil';
 import { ReserveWname } from '../../pages/schedule/status/[...arg]';
+import { Schedule } from '../../lib/dao/schedule-dao';
 
 const locale = 'en';
 
@@ -61,9 +62,7 @@ const renderStatus = (hourData: HourInDay[]) => {
 };
 
 interface Props {
-    start: number;
-    end: number;
-    slotsPerHour: number;
+    schedule: Schedule;
     date: Date;
     reserved: ReserveWname[];
     onClick: () => void;
@@ -71,14 +70,11 @@ interface Props {
 }
 
 const DayScheduleStatus = (props: Props) => {
-    const { start, end, slotsPerHour, date, onClick } = props;
+    const { date, onClick } = props;
     const router = useRouter();
 
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
-
-    const hourData = getHours(start, end, slotsPerHour);
-    setSlots(hourData, slotsPerHour);
 
     const handleClickSlot = () => {
         onClick();
@@ -110,9 +106,7 @@ const DayScheduleStatus = (props: Props) => {
             </Box>
             <HoursReserved
                 date={date}
-                start={start}
-                end={end}
-                slotsPerHour={slotsPerHour}
+                schedule={props.schedule}
                 reserved={props.reserved}
                 onClick={handleClickSlot}
             ></HoursReserved>

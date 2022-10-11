@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb'
+import { RESERVE_COLLECTION } from './reserve-dao';
 
 const MONGODB_DB = process.env.MONGODB_DB;
 export const SCHEDULE_COLLECTION = 'schedule';
@@ -86,5 +87,6 @@ export const updateSchedule = async (client: MongoClient, id: string, schedule: 
 export const deleteSchedule = async (client: MongoClient, id: string) => {
     const db = client.db(MONGODB_DB);
     const col = db.collection<Schedule>(SCHEDULE_COLLECTION);
+    await db.collection(RESERVE_COLLECTION).deleteMany({ sch: id });
     return await col.deleteOne({ _id: new ObjectId(id) });
 }

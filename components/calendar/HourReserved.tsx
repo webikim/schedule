@@ -20,6 +20,8 @@ import {
 } from './Hours';
 import { Reserve } from '../../lib/dao/reserve-dao';
 import { ReserveWname } from '../../pages/schedule/status/[...arg]';
+import { Schedule } from '../../lib/dao/schedule-dao';
+import dayjs from 'dayjs';
 
 interface SlotTextProps extends TypographyProps {
     index: number;
@@ -130,36 +132,53 @@ const renderSlots = (
 
 interface Props {
     date: Date;
-    start: number;
-    end: number;
-    slotsPerHour: number;
+    schedule: Schedule;
     onClick: (hour: number, min: number) => void;
     reserved: ReserveWname[];
 }
 
 const HoursReserved = (props: Props) => {
-    const hourData = getHours(props.start, props.end, props.slotsPerHour);
-    setSlots(hourData, props.slotsPerHour);
+    const { date, schedule } = props;
+    const start = dayjs(props.schedule.timefrom).hour();
+    const end = dayjs(props.schedule.timeto).hour();
+
+    const hourData = getHours(start, end, props.schedule.slots);
+    setSlots(hourData, props.schedule.slots);
 
     const handleClickSlot = (hour: number, min: number) => () => {
         props.onClick(hour, min);
     };
 
-    const hourNslots: JSX.Element[] = [];
-    hourData.map((data: HourInDay, index) => {
-        hourNslots.push(
-            renderSlots(
-                props.date,
-                data,
-                index === 0,
-                true,
-                AMPM_FIRST,
-                props.reserved
-            )
+    if (
+        dayjs(date).valueOf() < dayjs(schedule.datefrom).valueOf() ||
+        (schedule.dateto &&
+            dayjs(date).valueOf() > dayjs(schedule.dateto).valueOf())
+    ) {
+        return (
+            <>
+                <Box sx={{ marginTop: 3 }}>
+                    <CenteredText>
+                        You are out of the scope of your schedule.
+                    </CenteredText>
+                </Box>
+            </>
         );
-    });
-
-    return <>{Children.toArray(hourNslots)}</>;
+    } else {
+        const hourNslots: JSX.Element[] = [];
+        hourData.map((data: HourInDay, index) => {
+            hourNslots.push(
+                renderSlots(
+                    props.date,
+                    data,
+                    index === 0,
+                    true,
+                    AMPM_FIRST,
+                    props.reserved
+                )
+            );
+        });
+        return <>{Children.toArray(hourNslots)}</>;
+    }
 };
 
 export default HoursReserved;

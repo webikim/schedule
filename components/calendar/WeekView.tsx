@@ -5,14 +5,7 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
-import {
-    Children,
-    JSXElementConstructor,
-    ReactElement,
-    ReactFragment,
-    ReactPortal,
-    useContext,
-} from 'react';
+import { Children, useContext } from 'react';
 import dayjs from 'dayjs';
 import Hours, { selectWithDate } from './Hours';
 import DateNavigator from './DateNavigator';
@@ -21,6 +14,7 @@ import { getString } from '../locale/stringUtil';
 import { CenteredText } from '../theme/styles';
 import { Reserve } from '../../lib/dao/reserve-dao';
 import LocaleContext from '../../store/localeContext';
+import { Schedule } from '../../lib/dao/schedule-dao';
 
 const locale = 'en';
 
@@ -70,12 +64,10 @@ const HCenteredText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const getWeekData = (lang: string, date: Date) => {
     const refDate = new Date(date);
-    // refDate.setDate(refDate.getDate() - refDate.getDay() - 1);
     refDate.setDate(refDate.getDate() - 1);
 
     const weekData = WeekString[lang].map((each, index: number) => {
         refDate.setDate(refDate.getDate() + 1);
-        // return new WeekData(index, new Date(refDate));
         return new WeekData(refDate.getDay(), new Date(refDate));
     });
     return weekData;
@@ -104,23 +96,9 @@ const renderSeperator = (weekData: WeekData[]) => {
     return <> {Children.toArray(weekHeader)} </>;
 };
 
-// const renderWeeklySchedule = (props: Props, weekData: WeekData[]) => {
-//     const schedules: JSX.Element[] = [];
-//     weekData.map((each) => {
-//         schedules.push(
-//             <Grid item xs={1.7}>
-//                 <Hours {...props}></Hours>
-//             </Grid>
-//         );
-//     });
-//     return <> {Children.toArray(schedules)} </>;
-// };
-
 interface Props {
-    start: number;
-    end: number;
-    slotsPerHour: number;
     date: Date;
+    schedule: Schedule;
     reserved: Reserve[];
     onClickAdd: (date: Date) => void;
     onClickDelete: (date: Date) => void;
@@ -128,8 +106,7 @@ interface Props {
 }
 
 const WeekView = (props: Props) => {
-    const { start, end, slotsPerHour, date, onClickAdd, onClickDelete } = props;
-    // const [date, setDate] = useState(props.date);
+    const { date, onClickAdd, onClickDelete } = props;
 
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
@@ -167,9 +144,7 @@ const WeekView = (props: Props) => {
             <Grid item xs={1.7}>
                 <Hours
                     date={each.date}
-                    start={start}
-                    end={end}
-                    slotsPerHour={slotsPerHour}
+                    schedule={props.schedule}
                     reserved={selectWithDate(props.reserved, each.date)}
                     onClick={handleClickSlot(each)}
                 ></Hours>

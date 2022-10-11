@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { CenteredText } from '../theme/styles';
 import { Reserve } from '../../lib/dao/reserve-dao';
 import { useSession } from 'next-auth/react';
+import { Schedule } from '../../lib/dao/schedule-dao';
 
 export class HourInDay {
     hour: number;
@@ -163,7 +164,8 @@ const renderSlots = (
     let slots: JSX.Element[] = [];
     const formatter = Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
     data.slots.map((each, index) => {
-        let timeslot = (
+        let timeslot;
+        timeslot = (
             <SlotText onClick={onClickSlot(data.hour, each, true)}>
                 {convertHour(data.hour)}:{formatter.format(each)}
             </SlotText>
@@ -204,16 +206,17 @@ const renderSlots = (
 
 interface Props {
     date: Date;
-    start: number;
-    end: number;
-    slotsPerHour: number;
+    schedule: Schedule;
     onClick: (hour: number, min: number, isAdd: boolean) => void;
     reserved: Reserve[];
 }
 
 const Hours = (props: Props) => {
-    const hourData = getHours(props.start, props.end, props.slotsPerHour);
-    setSlots(hourData, props.slotsPerHour);
+    const { date, schedule } = props;
+    const start = dayjs(props.schedule.timefrom).hour();
+    const end = dayjs(props.schedule.timeto).hour();
+    const hourData = getHours(start, end, props.schedule.slots);
+    setSlots(hourData, props.schedule.slots);
 
     const session = useSession();
 
@@ -222,24 +225,31 @@ const Hours = (props: Props) => {
             props.onClick(hour, min, isAdd);
         };
 
-    const hourNslots: JSX.Element[] = [];
-    hourData.map((data: HourInDay, index) => {
-        hourNslots.push(
-            renderSlots(
-                session && session.data
-                    ? session.data!.user!.email!
-                    : undefined,
-                props.date,
-                data,
-                index === 0,
-                AMPM_FIRST,
-                handleClickSlot,
-                props.reserved
-            )
-        );
-    });
-
-    return <> {Children.toArray(hourNslots)} </>;
+    if (
+        dayjs(date).valueOf() < dayjs(schedule.datefrom).valueOf() ||
+        (schedule.dateto &&
+            dayjs(date).valueOf() > dayjs(schedule.dateto).valueOf())
+    ) {
+        return <></>;
+    } else {
+        const hourNslots: JSX.Element[] = [];
+        hourData.map((data: HourInDay, index) => {
+            hourNslots.push(
+                renderSlots(
+                    session && session.data
+                        ? session.data!.user!.email!
+                        : undefined,
+                    props.date,
+                    data,
+                    index === 0,
+                    AMPM_FIRST,
+                    handleClickSlot,
+                    props.reserved
+                )
+            );
+        });
+        return <> {Children.toArray(hourNslots)} </>;
+    }
 };
 
 export default Hours;
