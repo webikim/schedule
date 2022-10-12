@@ -27,6 +27,7 @@ const strings = {
 export type ScheduleShort = {
     id: string;
     title: string;
+    image: string;
     desc: string;
     created: string;
 };

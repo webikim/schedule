@@ -12,6 +12,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import NotificationContext from '../../store/notification-context';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 
 import { getString } from '../locale/stringUtil';
 import AlertBox from '../layout/AlertBox';
@@ -121,6 +122,18 @@ const ManageSchedule = (props: Props) => {
                     disablePadding
                     sx={{ borderBottom: 'lightgray 1px solid' }}
                 >
+                    {each.image && (
+                        <div
+                            style={{ borderRadius: '5px', overflow: 'hidden' }}
+                        >
+                            <Image
+                                src={process.env.S3URL + each.image}
+                                alt={each.title}
+                                width={22}
+                                height={22}
+                            />
+                        </div>
+                    )}
                     <ListItemButton
                         sx={{ height: '2em' }}
                         onClick={handleClickSchedule(index)}

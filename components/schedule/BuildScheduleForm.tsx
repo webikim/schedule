@@ -13,13 +13,7 @@ import {
     TextFieldProps,
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
-import React, {
-    createRef,
-    Dispatch,
-    useContext,
-    useRef,
-    useState,
-} from 'react';
+import React, { Dispatch, useContext, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -28,10 +22,12 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useSession } from 'next-auth/react';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
+import Image from 'next/image';
 import { Schedule } from '../../lib/dao/schedule-dao';
 import LocaleContext from '../../store/localeContext';
 
 import { getString } from '../locale/stringUtil';
+import { result2object } from '../../lib/aws-helper';
 
 const locale = 'en';
 
@@ -101,7 +97,6 @@ interface Props {
 
 const BuildScheduleForm = (props: Props) => {
     const { schedule } = props;
-    const filePickerRef = useRef<HTMLInputElement>(null);
     const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(null);
     const localeCtx = useContext(LocaleContext);
     const lang = localeCtx.locale ? localeCtx.locale.lang : 'en';
@@ -128,14 +123,39 @@ const BuildScheduleForm = (props: Props) => {
     );
     const { data } = useSession();
 
-    const handleChangeAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event);
+    const handleChangeAvatar = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const reader = new FileReader();
         if (event.target.files && event.target.files[0]) {
             reader.readAsDataURL(event.target.files[0]);
         }
-        reader.onload = (readerEvent) => {
-            setAvatar(readerEvent.target!.result);
+        reader.onload = async (readerEvent) => {
+            const newfile = readerEvent.target!.result;
+            setAvatar(newfile);
+            let response = await fetch('/api/aws/s3', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: event.target!.files![0].name,
+                    type: event.target!.files![0].type,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const { url } = await response.json();
+            response = await fetch(url, {
+                method: 'PUT',
+                body: event.target!.files![0],
+                headers: {
+                    'Content-Type': event.target!.files![0].type,
+                    'Access-Control-Allow-Origin': '*',
+                },
+            });
+            const [result, done] = await result2object(response.body!);
+            if (done) {
+                console.log(result, done);
+            }
         };
     };
 
@@ -154,10 +174,14 @@ const BuildScheduleForm = (props: Props) => {
         const title = formdata.get('title');
         const desc = formdata.get('desc');
         const contact = formdata.get('contact');
+        const image = formdata.get('file')
+            ? (formdata.get('file') as File).name
+            : null;
 
         props.onSubmit(
             JSON.stringify({
                 title: title,
+                image: image,
                 desc: desc,
                 contact: contact,
                 datefrom: datefrom.toDate(),
@@ -189,14 +213,20 @@ const BuildScheduleForm = (props: Props) => {
                         >
                             <IconButton component="label">
                                 <input
+                                    name="file"
                                     type="file"
                                     accept="image/png, image/jpeg"
                                     hidden
                                     onChange={handleChangeAvatar}
                                 />
-                                {avatar ? (
+                                {avatar || (schedule && schedule.image) ? (
                                     <Avatar
-                                        src={avatar as string}
+                                        src={
+                                            avatar
+                                                ? (avatar as string)
+                                                : process.env.S3URL +
+                                                  schedule!.image
+                                        }
                                         sx={{ width: '3em', height: '3em' }}
                                     />
                                 ) : (
@@ -238,7 +268,6 @@ const BuildScheduleForm = (props: Props) => {
                             defaultValue={schedule && schedule.contact}
                             size="small"
                         />
-
                         <Box sx={{ display: 'flex' }}>
                             <DesktopDatePicker
                                 label={getString(lang, strings.label.fromdate)}
@@ -262,7 +291,6 @@ const BuildScheduleForm = (props: Props) => {
                                 )}
                             />
                         </Box>
-
                         <Box sx={{ display: 'flex' }}>
                             <TimePicker
                                 label={getString(lang, strings.label.starttime)}

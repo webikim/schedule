@@ -31,6 +31,10 @@ const handler = async (req: ScheduleApiRequest, res: NextApiResponse) => {
                 return;
             }
             res.status(400).json({ message: 'failed to create schedule.' });
+            break;
+        default:
+            res.status(405).json({ message: 'Method is not allowed.' });
+            break;
     }
 }
 

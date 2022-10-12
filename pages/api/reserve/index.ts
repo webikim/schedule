@@ -36,6 +36,7 @@ const handler = async (req: TimeApiRequest, res: NextApiResponse) => {
             }
             res.status(400).json({ message: 'failed to delete.' });
         default:
+            res.status(405).json({ message: 'Method is not allowed.' })
             break;
     }
 }

@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
-import { CenteredText, TitleText } from '../../components/theme/styles';
+import { CenteredText } from '../../components/theme/styles';
 import { Schedule } from '../../lib/dao/schedule-dao';
 import { getString } from '../../components/locale/stringUtil';
 import NotificationContext from '../../store/notification-context';

@@ -23,8 +23,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 res.status(200)
             }
             break;
-
         default:
+            res.status(405).json({ message: 'Method is not allowed.' });
             break;
     }
 }
