@@ -31,7 +31,7 @@ export const getScheduleList = async (client: MongoClient, email?: string) => {
     const col = db.collection<Schedule>(SCHEDULE_COLLECTION);
 
     const query = email ? { createdby: email } : {}
-    const rawlist = await col.find(query, { projection: { _id: 1, title: 1, image: 1, desc: 1, created: 1 } })
+    const rawlist = await col.find(query, { projection: { _id: 1, title: 1, image: 1, desc: 1, datefrom: 1 } })
         .toArray();
     return rawlist.map((each) => {
         return {
@@ -39,7 +39,7 @@ export const getScheduleList = async (client: MongoClient, email?: string) => {
             title: each.title,
             image: each.image || null,
             desc: each.desc,
-            created: each.created.toISOString(),
+            datefrom: each.datefrom || null
         };
     });
 }

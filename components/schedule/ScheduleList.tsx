@@ -20,8 +20,6 @@ const ScheduleList = (props: Props) => {
         return <Typography>{emptymessage}</Typography>;
     }
 
-    console.log('... schedule list = ', schedules);
-
     const scheduleList: JSX.Element[] = [];
     schedules.map((each, index) => {
         scheduleList.push(
