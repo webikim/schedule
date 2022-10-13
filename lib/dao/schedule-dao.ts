@@ -39,7 +39,7 @@ export const getScheduleList = async (client: MongoClient, email?: string) => {
             title: each.title,
             image: each.image || null,
             desc: each.desc,
-            datefrom: each.datefrom || null
+            datefrom: each.datefrom ? each.datefrom.toISOString() : null
         };
     });
 }

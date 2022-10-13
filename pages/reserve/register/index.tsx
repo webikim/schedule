@@ -29,7 +29,7 @@ export type ScheduleShort = {
     title: string;
     image: string | null;
     desc: string;
-    datefrom: string;
+    datefrom: string | null;
 };
 
 interface Props {
