@@ -17,13 +17,15 @@ const HomePage = (props: Props) => {
     console.log('... schedules = ', props.schedules);
     const title = '';
     const scheduleList: JSX.Element[] = [];
-    props.schedules.map((each) => {
-        scheduleList.push(
-            <Grid item xs={4} sm={3} md={2.4} sx={{ padding: 2 }}>
-                <ScheduleCard schedule={each} />
-            </Grid>
-        );
-    });
+    if (props.schedules) {
+        props.schedules.map((each) => {
+            scheduleList.push(
+                <Grid item xs={4} sm={3} md={2.4} sx={{ padding: 2 }}>
+                    <ScheduleCard schedule={each} />
+                </Grid>
+            );
+        });
+    }
     return (
         <>
             <Head>{title}</Head>
@@ -39,17 +41,17 @@ export const getServerSideProps = async (
 ) => {
     const session = await getSession({ req: context.req });
     // console.log('... re-rendered...');
-    if (session) {
-        const client = await connectMongo();
-        const schedules = await getScheduleList(client);
-        await client.close();
-        console.log('... schedule = ', schedules);
-        return {
-            props: {
-                schedules: schedules,
-            },
-        };
-    }
+    // if (session) {
+    const client = await connectMongo();
+    const schedules = await getScheduleList(client);
+    await client.close();
+    console.log('... schedule = ', schedules);
+    return {
+        props: {
+            schedules: schedules,
+        },
+    };
+    // }
     return {
         props: {},
     };
