@@ -10,10 +10,10 @@ export type Schedule = {
     image: string;
     desc: string;
     contact: string;
-    datefrom: Date;
-    dateto?: Date | null;
-    timefrom: Date;
-    timeto: Date;
+    datefrom: string;
+    dateto?: string | null;
+    timefrom: string;
+    timeto: string;
     created: Date;
     slots: number;
     offday: Date[];
@@ -39,7 +39,7 @@ export const getScheduleList = async (client: MongoClient, email?: string) => {
             title: each.title,
             image: each.image || null,
             desc: each.desc,
-            datefrom: each.datefrom ? each.datefrom.toISOString() : null
+            datefrom: each.datefrom ? each.datefrom : null
         };
     });
 }
